@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace AndreyGames.Leaderboards.Service.Migrations
 {
-    public partial class InitialMigrations : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -30,7 +30,7 @@ namespace AndreyGames.Leaderboards.Service.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     LeaderboardId = table.Column<int>(type: "integer", nullable: true),
                     PlayerName = table.Column<string>(type: "text", nullable: true),
-                    Score = table.Column<int>(type: "integer", nullable: false),
+                    Score = table.Column<long>(type: "bigint", nullable: false),
                     Timestamp = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
@@ -51,9 +51,9 @@ namespace AndreyGames.Leaderboards.Service.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Leaderboards_Game",
+                name: "IX_Leaderboards_Game_IsActive",
                 table: "Leaderboards",
-                column: "Game",
+                columns: new[] { "Game", "IsActive" },
                 unique: true);
         }
 

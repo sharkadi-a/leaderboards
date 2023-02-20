@@ -11,6 +11,6 @@ namespace AndreyGames.Leaderboards.Service.Abstract
         
         Task<LeaderboardView> GetLeaderboard(string game, int? offset = null, int? limit = null);
 
-        Task AddOrUpdateScore(string game, string playerName, int score);
+        Task PutPlayerScore(string game, string playerName, long score);
     }
 }

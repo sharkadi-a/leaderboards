@@ -1,11 +1,13 @@
 ﻿using System.Threading.Tasks;
 using AndreyGames.Leaderboards.Service.Abstract;
-using AndreyGames.Leaderboards.Service.ViewModels;
+using AndreyGames.Leaderboards.Service.Api;
+using AndreyGames.Leaderboards.Service.Middleware;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AndreyGames.Leaderboards.Service.Controllers
 {
     [Route("leaderboards")]
+    [FormatExceptions]
     public class LeaderboardController: ControllerBase
     {
         private readonly ILeaderboardService _leaderboardService;
@@ -17,31 +19,33 @@ namespace AndreyGames.Leaderboards.Service.Controllers
         }
 
         [HttpPost("{game}")]
-        public async Task<ActionResult> AddLeaderboard([FromRoute] string game)
+        [CommitOnOk]
+        public async Task<LeaderboardApiResponse> AddLeaderboard([FromRoute] string game)
         {
             if (!await _leaderboardService.Exist(game))
             {
                 await _leaderboardService.CreateLeaderboard(game);
             }
 
-            return Ok();
+            return new LeaderboardApiResponse();
         }
 
         [HttpGet("{game}")]
-        public async Task<ActionResult<LeaderboardView>> GetLeaderboard([FromRoute] string game, 
+        public async Task<LeaderboardApiResponse> GetLeaderboard([FromRoute] string game, 
             [FromQuery] int? offset,
             [FromQuery] int? limit)
         {
             var view = await _leaderboardService.GetLeaderboard(game, offset, limit);
 
-            return Ok(view);
+            return new LeaderboardApiResponse(view);
         }
 
         [HttpPut("{game}/{playerName}/{score:int}")]
-        public async Task<ActionResult> AddOrUpdateScore([FromRoute] string game, [FromRoute] string playerName, [FromRoute] int score)
+        [CommitOnOk]
+        public async Task<LeaderboardApiResponse> AddOrUpdateScore([FromRoute] string game, [FromRoute] string playerName, [FromRoute] int score)
         {
-            await _leaderboardService.AddOrUpdateScore(game, playerName, score);
-            return Ok();
+            await _leaderboardService.PutPlayerScore(game, playerName, score);
+            return new LeaderboardApiResponse();
         }
     }
 }

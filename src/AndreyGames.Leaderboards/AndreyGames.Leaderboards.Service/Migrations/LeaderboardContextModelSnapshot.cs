@@ -32,8 +32,8 @@ namespace AndreyGames.Leaderboards.Service.Migrations
                     b.Property<string>("PlayerName")
                         .HasColumnType("text");
 
-                    b.Property<int>("Score")
-                        .HasColumnType("integer");
+                    b.Property<long>("Score")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp without time zone");
@@ -61,7 +61,7 @@ namespace AndreyGames.Leaderboards.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Game")
+                    b.HasIndex("Game", "IsActive")
                         .IsUnique();
 
                     b.ToTable("Leaderboards");

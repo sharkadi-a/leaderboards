@@ -41,7 +41,9 @@ namespace AndreyGames.Leaderboards.Service.Implementation
         
         public async Task<LeaderboardView> GetLeaderboard(string game, int? offset = null, int? limit = null)
         {
-            var leaderboard = await _context.Leaderboards.FirstOrDefaultAsync(x => x.Game == game && x.IsActive);
+            var leaderboard = await _context
+                .Leaderboards
+                .FirstOrDefaultAsync(x => x.Game == game && x.IsActive);
 
             if (leaderboard is null)
             {
@@ -50,15 +52,14 @@ namespace AndreyGames.Leaderboards.Service.Implementation
 
             var offsetValue = offset ?? 0;
             var limitValue = limit ?? 20;
-            
+
             var entries = leaderboard.Entries
                 .OrderByDescending(x => x.Score)
+                .ThenByDescending(x => x.Timestamp)
                 .Skip(offsetValue)
                 .Take(limitValue);
-
-            var totalEntries = leaderboard.Entries.Count;
             
-            var counter = totalEntries - offsetValue;
+            var counter = offsetValue;
             
             return new LeaderboardView
             {
@@ -67,12 +68,12 @@ namespace AndreyGames.Leaderboards.Service.Implementation
                 {
                     Name = x.PlayerName,
                     Score = x.Score,
-                    Rank = counter++,
+                    Rank = ++counter,
                 }).ToList(),
             };
         }
 
-        public async Task AddOrUpdateScore(string game, string playerName, int score)
+        public async Task PutPlayerScore(string game, string playerName, long score)
         {
             var leaderboard = await _context.Leaderboards.FirstOrDefaultAsync(x => x.Game == game && x.IsActive);
 

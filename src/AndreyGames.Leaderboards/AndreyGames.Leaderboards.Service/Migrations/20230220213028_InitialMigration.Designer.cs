@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AndreyGames.Leaderboards.Service.Migrations
 {
     [DbContext(typeof(LeaderboardContext))]
-    [Migration("20230219175622_InitialMigrations")]
-    partial class InitialMigrations
+    [Migration("20230220213028_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,8 +34,8 @@ namespace AndreyGames.Leaderboards.Service.Migrations
                     b.Property<string>("PlayerName")
                         .HasColumnType("text");
 
-                    b.Property<int>("Score")
-                        .HasColumnType("integer");
+                    b.Property<long>("Score")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp without time zone");
@@ -63,7 +63,7 @@ namespace AndreyGames.Leaderboards.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Game")
+                    b.HasIndex("Game", "IsActive")
                         .IsUnique();
 
                     b.ToTable("Leaderboards");

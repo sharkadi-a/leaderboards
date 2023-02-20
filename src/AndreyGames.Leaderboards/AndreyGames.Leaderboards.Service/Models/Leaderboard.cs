@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AndreyGames.Leaderboards.Service.Models
 {
-    [Index(nameof(Game), IsUnique = true)]
+    [Index(nameof(Game), nameof(IsActive), IsUnique = true)]
     public class Leaderboard
     {
         public int Id { get; set; }
@@ -16,9 +16,9 @@ namespace AndreyGames.Leaderboards.Service.Models
         [DefaultValue(true)]
         public bool IsActive { get; set; }
         
-        public ICollection<Entry> Entries { get; set; }
+        public virtual ICollection<Entry> Entries { get; set; }
 
-        public virtual void AddOrUpdateScore(string playerName, int score)
+        public virtual void AddOrUpdateScore(string playerName, long score)
         {
             var existing = Entries.FirstOrDefault(x => x.PlayerName == playerName);
             if (existing is null)
@@ -30,7 +30,7 @@ namespace AndreyGames.Leaderboards.Service.Models
                     Timestamp = DateTime.Now,
                 });
             }
-            else
+            else if (existing.Score < score)
             {
                 existing.Score = score;
                 existing.Timestamp = DateTime.Now;

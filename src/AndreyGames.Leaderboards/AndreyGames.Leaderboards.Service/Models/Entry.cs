@@ -8,11 +8,11 @@ namespace AndreyGames.Leaderboards.Service.Models
     {
         public long Id { get; set; }
         
-        public Leaderboard Leaderboard { get; set; }
+        public virtual Leaderboard Leaderboard { get; set; }
         
         public string PlayerName { get; set; }
         
-        public int Score { get; set; }
+        public long Score { get; set; }
         
         public DateTime Timestamp { get; set; }
     }

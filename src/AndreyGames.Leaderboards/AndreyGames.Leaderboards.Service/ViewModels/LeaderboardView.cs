@@ -8,7 +8,7 @@ namespace AndreyGames.Leaderboards.Service.ViewModels
         {
             public int Rank { get; set; }
             public string Name { get; set; }
-            public int Score { get; set; }
+            public long Score { get; set; }
         }
 
         public int Offset { get; set; }

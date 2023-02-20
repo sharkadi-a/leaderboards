@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 namespace AndreyGames.Leaderboards.Service
 {
@@ -17,14 +18,23 @@ namespace AndreyGames.Leaderboards.Service
         {
             _configuration = configuration;
         }
-        
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddDbContext<LeaderboardContext>(x=>x.UseNpgsql(_configuration.GetConnectionString("Default")));
+            services.AddDbContext<LeaderboardContext>(ctx => ctx
+                .UseLazyLoadingProxies()
+                .UseNpgsql(_configuration.GetConnectionString("Default")));
+            
             services.AddScoped<ILeaderboardService, LeaderboardService>();
+            services.AddSwaggerGen(options => options.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Version = "v1",
+                Title = "andrey.games Leaderboards API",
+                Description = "Leaderboards API for andrey.games web services",
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +51,9 @@ namespace AndreyGames.Leaderboards.Service
             {
                 endpoints.MapControllers();
             });
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             MigrateDatabase(app);
         }
