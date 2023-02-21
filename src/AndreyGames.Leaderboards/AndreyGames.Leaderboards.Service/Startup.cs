@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using ZNetCS.AspNetCore.Authentication.Basic;
 
 namespace AndreyGames.Leaderboards.Service
 {
@@ -27,7 +28,7 @@ namespace AndreyGames.Leaderboards.Service
             services.AddDbContext<LeaderboardContext>(ctx => ctx
                 .UseLazyLoadingProxies()
                 .UseNpgsql(_configuration.GetConnectionString("Default")));
-            
+
             services.AddScoped<ILeaderboardService, LeaderboardService>();
             services.AddSwaggerGen(options => options.SwaggerDoc("v1", new OpenApiInfo
             {
@@ -35,6 +36,16 @@ namespace AndreyGames.Leaderboards.Service
                 Title = "andrey.games Leaderboards API",
                 Description = "Leaderboards API for andrey.games web services",
             }));
+
+            services.AddScoped<AuthenticationEvents>();
+            services.AddAuthentication(BasicAuthenticationDefaults.AuthenticationScheme)
+                .AddBasicAuthentication(
+                    options =>
+                    {
+                        options.Realm = "andrey.games Leaderboards API";
+                        options.EventsType = typeof(AuthenticationEvents);
+                        options.AjaxRequestOptions.SuppressWwwAuthenticateHeader = true;
+                    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +57,8 @@ namespace AndreyGames.Leaderboards.Service
             }
 
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

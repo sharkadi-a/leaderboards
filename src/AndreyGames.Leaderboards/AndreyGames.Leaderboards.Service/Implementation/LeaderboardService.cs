@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AndreyGames.Leaderboards.API;
 using AndreyGames.Leaderboards.Service.Abstract;
 using AndreyGames.Leaderboards.Service.Exceptions;
 using AndreyGames.Leaderboards.Service.Models;
-using AndreyGames.Leaderboards.Service.ViewModels;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace AndreyGames.Leaderboards.Service.Implementation
@@ -64,12 +65,53 @@ namespace AndreyGames.Leaderboards.Service.Implementation
             return new LeaderboardView
             {
                 Offset = offsetValue,
-                Entries = entries.Select(x => new LeaderboardView.Entry
+                Entries = entries.Select(x => new LeaderboardEntry
                 {
                     Name = x.PlayerName,
                     Score = x.Score,
                     Rank = ++counter,
                 }).ToList(),
+            };
+        }
+
+        public async Task<LeaderboardEntry> GetScoreForPlayer(string game, string playerName)
+        {
+            var leaderboard = await _context
+                .Leaderboards
+                .FirstOrDefaultAsync(x => x.Game == game && x.IsActive);
+
+            if (leaderboard is null)
+            {
+                throw new LeaderboardNotFound(game);
+            }
+
+            var entry = leaderboard.Entries.FirstOrDefault(x => x.PlayerName == playerName);
+
+            if (entry is null)
+            {
+                return new LeaderboardEntry
+                {
+                    Name = playerName,
+                };
+            }
+
+            var rank = await _context.Database
+                .GetDbConnection()
+                .QueryFirstOrDefaultAsync<int>(
+                    @"WITH entries as (SELECT ""Entries"".*, row_number() OVER (ORDER BY ""Score"" DESC, ""Timestamp"" DESC) as ""RowNumber""
+                                        FROM ""Entries"" WHERE ""LeaderboardId"" = @id)
+                                        SELECT ""RowNumber"" FROM entries WHERE ""PlayerName"" = @name",
+                    new
+                    {
+                        id = leaderboard.Id,
+                        name = playerName,
+                    });
+
+            return new LeaderboardEntry
+            {
+                Name = entry.PlayerName,
+                Score = entry.Score,
+                Rank = rank,
             };
         }
 

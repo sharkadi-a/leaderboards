@@ -2,12 +2,14 @@
 using AndreyGames.Leaderboards.Service.Abstract;
 using AndreyGames.Leaderboards.Service.Api;
 using AndreyGames.Leaderboards.Service.Middleware;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AndreyGames.Leaderboards.Service.Controllers
 {
     [Route("leaderboards")]
     [FormatExceptions]
+    [Authorize]
     public class LeaderboardController: ControllerBase
     {
         private readonly ILeaderboardService _leaderboardService;
@@ -40,7 +42,13 @@ namespace AndreyGames.Leaderboards.Service.Controllers
             return new LeaderboardApiResponse(view);
         }
 
-        [HttpPut("{game}/{playerName}/{score:int}")]
+        [HttpGet("{game}/{playerName}/score")]
+        public async Task<LeaderboardApiResponse> GetPlayerScore([FromRoute] string game, [FromRoute] string playerName)
+        {
+            return new LeaderboardApiResponse(await _leaderboardService.GetScoreForPlayer(game, playerName));
+        }
+
+        [HttpPut("{game}/{playerName}/score/{score:int}")]
         [CommitOnOk]
         public async Task<LeaderboardApiResponse> AddOrUpdateScore([FromRoute] string game, [FromRoute] string playerName, [FromRoute] int score)
         {
