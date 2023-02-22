@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: cd src/AndreyGames.Leaderboards.Service && docker build . --file Dockerfile --tag andrey-games-leaderboards:$(date +%s)
+      run: cd "src/AndreyGames.Leaderboards.Service" && docker build . --file Dockerfile --tag andrey-games-leaderboards:$(date +%s)
