@@ -5,7 +5,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["AndreyGames.Leaderboards.Service/AndreyGames.Leaderboards.Service.csproj", "AndreyGames.Leaderboards.Service/"]
+#COPY ["AndreyGames.Leaderboards.Service/AndreyGames.Leaderboards.Service.csproj", "AndreyGames.Leaderboards.Service/"]
 RUN dotnet restore "AndreyGames.Leaderboards.Service/AndreyGames.Leaderboards.Service.csproj"
 COPY . .
 WORKDIR "/src/AndreyGames.Leaderboards.Service"
