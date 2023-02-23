@@ -19,8 +19,8 @@ jobs:
       
     - name: Auth into Docker
       env:
-          DOCKER_TOKEN: ${{ env.CR_PAT }}
-      run: echo $DOCKER_TOKEN | docker login ghcr.io -u sharkadi-a --password-stdin
+        DOCKER_TOKEN: ${{ env.CR_PAT }}
+      run: command echo $DOCKER_TOKEN | docker login ghcr.io -u sharkadi-a --password-stdin
     
     - name: Push into Docker Repository
       run: docker push ghcr.io/sharkadi-a/andrey-games-leaderboards:latest
