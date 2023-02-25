@@ -15,4 +15,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: cd src && docker build . --file Dockerfile --tag andrey-games-leaderboards:$(date +%s)
+      run: cd src && docker build . --file Dockerfile --tag andrey-games-leaderboards --tag ghcr.io/sharkadi-a/andrey-games-leaderboards
+      
+    - name: Auth into Docker
+      run: command echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u sharkadi-a --password-stdin
+    
+    - name: Push into Docker Repository
+      run: docker push ghcr.io/sharkadi-a/andrey-games-leaderboards
+
