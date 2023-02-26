@@ -18,7 +18,7 @@ jobs:
       run: cd src && docker build . --file Dockerfile --tag andrey-games-leaderboards --tag ghcr.io/${{ github.repository_owner }}/andrey-games-leaderboards
       
     - name: Auth into Docker
-      run: command echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.repository_owner }} -a --password-stdin
+      run: command echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
     
     - name: Push into Docker Repository
       run: docker push ghcr.io/sharkadi-a/andrey-games-leaderboards
