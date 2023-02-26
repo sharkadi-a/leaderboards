@@ -41,7 +41,7 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         port: ${{ secrets.SSH_PORT }}
         source: "${{ vars.PROJECT_NAME }}.conf"
-        target: "/etc/infra/nginx.conf.d/"
+        target: "/etc/infra/nginx.conf.d/shared"
     
     - name: Run Docker Compose
       uses: appleboy/ssh-action@v0.1.7
@@ -54,4 +54,5 @@ jobs:
           docker login ghcr.io -u ${{ github.repository_owner }} -p ${{ secrets.CR_PAT }}
           cd /etc/infra/${{ vars.PROJECT_NAME }} 
           docker-compose up -d --force-recreate
+          nginx -s reload
 
