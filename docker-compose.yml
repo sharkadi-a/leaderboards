@@ -16,5 +16,4 @@ services:
 
 networks:
   infra_shared:
-    driver: bridge
     external: true
