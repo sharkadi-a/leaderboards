@@ -11,10 +11,10 @@ services:
     ports:
       - "6000:80"
     networks:
-      - shared
+      - infra_shared
     restart: always
 
 networks:
-  shared:
+  infra_shared:
     driver: bridge
     external: true
