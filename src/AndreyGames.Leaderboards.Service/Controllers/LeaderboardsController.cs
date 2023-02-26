@@ -7,17 +7,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AndreyGames.Leaderboards.Service.Controllers
 {
-    [Route("leaderboards")]
+    [Route("/")]
     [FormatExceptions]
     [Authorize]
-    public class LeaderboardController: ControllerBase
+    public class LeaderboardsController: ControllerBase
     {
         private readonly ILeaderboardService _leaderboardService;
 
-        public LeaderboardController(ILeaderboardService leaderboardService)
+        public LeaderboardsController(ILeaderboardService leaderboardService)
         {
             _leaderboardService = leaderboardService;
-
         }
 
         [HttpPost("{game}")]
