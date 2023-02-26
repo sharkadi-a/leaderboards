@@ -5,7 +5,7 @@ services:
     container_name: leaderboards
     image: ghcr.io/sharkadi-a/andrey-games-leaderboards:latest
     environment:
-      - ConnectionStrings__Default=User ID=user;Password=87aec3dbbc;Host=posgtres;Port=5432;Database=leaderboards;Pooling=true;
+      - ConnectionStrings__Default=User ID=user;Password=87aec3dbbc;Host=postgres;Port=5432;Database=leaderboards;Pooling=true;
       - Auth__0__UserName=user
       - Auth__1__UserName=87aec3dbbcls210957!
     ports:
