@@ -54,5 +54,5 @@ jobs:
           docker login ghcr.io -u ${{ github.repository_owner }} -p ${{ secrets.CR_PAT }}
           cd /etc/infra/${{ vars.PROJECT_NAME }} 
           docker-compose up -d --force-recreate
-          nginx -s reload
+          docker exec infra_nginx_1 nginx -s reload
 
