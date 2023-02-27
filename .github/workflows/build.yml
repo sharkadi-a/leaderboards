@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{ vars.PROJECT_NAME }} --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}
+      run: docker build . --file Dockerfile --tag ${{ vars.PROJECT_NAME }}:latest --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:${{ github.run_number }}.${{ github.run_attempt }} --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:latest
       
     - name: Auth into Docker
       run: command echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
