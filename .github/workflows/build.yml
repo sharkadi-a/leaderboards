@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{ vars.PROJECT_NAME }} --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}
+      run: docker build . --file Dockerfile --tag ${{ vars.PROJECT_NAME }}:latest --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:${{ github.run_number }}.${{ github.run_attempt }} --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:latest
       
     - name: Auth into Docker
       run: command echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
@@ -53,6 +53,6 @@ jobs:
         script: | 
           docker login ghcr.io -u ${{ github.repository_owner }} -p ${{ secrets.CR_PAT }}
           cd /etc/infra/${{ vars.PROJECT_NAME }} 
-          docker-compose up -d --force-recreate
+          docker-compose pull && docker-compose up -d
           docker exec infra_nginx_1 nginx -s reload
 
