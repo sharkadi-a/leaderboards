@@ -3,7 +3,7 @@ version: "3"
 services:
   leaderboards:
     container_name: leaderboards
-    image: ghcr.io/sharkadi-a/andrey-games-leaderboards:latest
+    image: ghcr.io/sharkadi-a/leaderboards:latest
     environment:
       - ConnectionStrings__Default=User ID=user;Password=87aec3dbbc;Host=postgres;Port=5432;Database=leaderboards;Pooling=true;
       - Auth__0__UserName=user
