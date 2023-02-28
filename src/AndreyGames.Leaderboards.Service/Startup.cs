@@ -1,5 +1,6 @@
 using AndreyGames.Leaderboards.Service.Abstract;
 using AndreyGames.Leaderboards.Service.Implementation;
+using AndreyGames.Leaderboards.Service.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -61,7 +62,8 @@ namespace AndreyGames.Leaderboards.Service
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
-            
+
+            app.UseMiddleware<RequestLoggingMiddleware>();
             app.UseRouting();
             
             app.UseAuthentication();
