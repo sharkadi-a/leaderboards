@@ -7,7 +7,7 @@ services:
     environment:
       - ConnectionStrings__Default=User ID=user;Password=87aec3dbbc;Host=postgres;Port=5432;Database=leaderboards;Pooling=true;
       - Auth__0__UserName=user
-      - Auth__1__UserName=87aec3dbbcls210957!
+      - Auth__1__Password=87aec3dbbcls210957!
     ports:
       - "6000:80"
     networks:
