@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AndreyGames.Leaderboards.Service.Controllers
 {
+    [ApiController]
     [Route("/")]
     [FormatExceptions]
     [Authorize]
