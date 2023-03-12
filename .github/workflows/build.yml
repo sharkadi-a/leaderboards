@@ -1,4 +1,4 @@
-name: dotnet core 5 project build
+name: .NET 5 project build and publish
 
 on:
   push:
