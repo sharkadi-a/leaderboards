@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: dotnet core 5 project build
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{ vars.PROJECT_NAME }}:latest --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:${{ github.run_number }}.${{ github.run_attempt }} --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:latest
+      run: docker build . --file Dockerfile --build-arg NAMESPACE="${{ github.repository_owner }}" --build-arg NUGET_KEY="${{ secrets.CR_PAT }}" --tag ${{ vars.PROJECT_NAME }}:latest --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:${{ github.run_number }}.${{ github.run_attempt }} --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:latest
       
     - name: Auth into Docker
       run: command echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin

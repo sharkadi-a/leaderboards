@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AndreyGames.Leaderboards.API;
@@ -40,7 +41,7 @@ namespace AndreyGames.Leaderboards.Service.Implementation
             await _context.Leaderboards.AddAsync(leaderboard);
         }
         
-        public async Task<LeaderboardView> GetLeaderboard(string game, int? offset = null, int? limit = null)
+        public async Task<LeaderboardView> GetLeaderboard(string game, bool onlyWinners = false, int? offset = null, int? limit = null)
         {
             var leaderboard = await _context
                 .Leaderboards
@@ -54,8 +55,13 @@ namespace AndreyGames.Leaderboards.Service.Implementation
             var offsetValue = offset ?? 0;
             var limitValue = limit ?? 20;
 
-            var entries = leaderboard.Entries
-                .OrderByDescending(x => x.Score)
+            IEnumerable<Entry> entries = leaderboard.Entries;
+            if (onlyWinners)
+            {
+                entries = entries.Where(x => x.IsWinner);
+            }
+
+            entries = entries.OrderByDescending(x => x.Score)
                 .ThenByDescending(x => x.Timestamp)
                 .Skip(offsetValue)
                 .Take(limitValue);
@@ -70,11 +76,19 @@ namespace AndreyGames.Leaderboards.Service.Implementation
                     Name = x.PlayerName,
                     Score = x.Score,
                     Rank = ++counter,
+                    IsWinner = x.IsWinner,
                 }).ToList(),
             };
         }
 
-        public async Task<LeaderboardEntry> GetScoreForPlayer(string game, string playerName)
+        private class ScoreItem
+        {
+            public long Score { get; set; }
+            public int Rank { get; set; }
+            public bool IsWinner { get; set; }
+        }
+        
+        public async Task<ICollection<LeaderboardEntry>> GetScoreForPlayer(string game, string playerName)
         {
             var leaderboard = await _context
                 .Leaderboards
@@ -89,33 +103,37 @@ namespace AndreyGames.Leaderboards.Service.Implementation
 
             if (entry is null)
             {
-                return new LeaderboardEntry
-                {
-                    Name = playerName,
-                };
+                return ArraySegment<LeaderboardEntry>.Empty;
             }
 
-            var rank = await _context.Database
+            var scores = await _context.Database
                 .GetDbConnection()
-                .QueryFirstOrDefaultAsync<int>(
+                .QueryAsync<ScoreItem>(
                     @"WITH entries as (SELECT ""Entries"".*, row_number() OVER (ORDER BY ""Score"" DESC, ""Timestamp"" DESC) as ""RowNumber""
                                         FROM ""Entries"" WHERE ""LeaderboardId"" = @id)
-                                        SELECT ""RowNumber"" FROM entries WHERE ""PlayerName"" = @name",
+                                        SELECT ""RowNumber"" as ""Rank"", ""Score"", ""IsWinner"" FROM entries WHERE ""PlayerName"" = @name", 
                     new
                     {
                         id = leaderboard.Id,
                         name = playerName,
                     });
 
-            return new LeaderboardEntry
+            var list = new LinkedList<LeaderboardEntry>();
+            foreach (var score in scores)
             {
-                Name = entry.PlayerName,
-                Score = entry.Score,
-                Rank = rank,
-            };
-        }
+                list.AddLast(new LeaderboardEntry
+                {
+                    Name = entry.PlayerName,
+                    Rank = score.Rank,
+                    Score = score.Score,
+                    IsWinner = score.IsWinner
+                });
+            }
 
-        public async Task PutPlayerScore(string game, string playerName, long score)
+            return list;
+        }
+        
+        public async Task PutPlayerScore(string game, string playerName, long score, bool isWinner = false)
         {
             var leaderboard = await _context.Leaderboards.FirstOrDefaultAsync(x => x.Game == game && x.IsActive);
 
@@ -124,7 +142,7 @@ namespace AndreyGames.Leaderboards.Service.Implementation
                 throw new LeaderboardNotFound(game);
             }
 
-            leaderboard.AddOrUpdateScore(playerName, score);
+            leaderboard.AddOrUpdateScore(playerName, score, isWinner);
         }
     }
 }

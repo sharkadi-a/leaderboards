@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
+using AndreyGames.Leaderboards.API;
 using AndreyGames.Leaderboards.Service.Abstract;
 using AndreyGames.Leaderboards.Service.Api;
 using AndreyGames.Leaderboards.Service.Middleware;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AndreyGames.Leaderboards.Service.Controllers
@@ -10,7 +10,8 @@ namespace AndreyGames.Leaderboards.Service.Controllers
     [ApiController]
     [Route("/")]
     [FormatExceptions]
-    [Authorize]
+    [Produces("application/json")]
+    [RequestCryptoProcessor]
     public class LeaderboardsController: ControllerBase
     {
         private readonly ILeaderboardService _leaderboardService;
@@ -20,39 +21,40 @@ namespace AndreyGames.Leaderboards.Service.Controllers
             _leaderboardService = leaderboardService;
         }
 
-        [HttpPost("{game}")]
+        [HttpPost("add")]
         [CommitOnOk]
-        public async Task<LeaderboardApiResponse> AddLeaderboard([FromRoute] string game)
+        public async Task<LeaderboardApiResponse> AddLeaderboard([FromBody] AddLeaderboardRequest request)
         {
-            if (!await _leaderboardService.Exist(game))
+            if (!await _leaderboardService.Exist(request.Game))
             {
-                await _leaderboardService.CreateLeaderboard(game);
+                await _leaderboardService.CreateLeaderboard(request.Game);
             }
 
             return new LeaderboardApiResponse();
         }
 
-        [HttpGet("{game}")]
-        public async Task<LeaderboardApiResponse> GetLeaderboard([FromRoute] string game, 
-            [FromQuery] int? offset,
-            [FromQuery] int? limit)
+        [HttpPost("get")]
+        public async Task<LeaderboardApiResponse> GetLeaderboard([FromBody] GetLeaderboardRequest request)
         {
-            var view = await _leaderboardService.GetLeaderboard(game, offset, limit);
+            var view = await _leaderboardService.GetLeaderboard(request.Game, 
+                request.WinnersOnly, 
+                request.Offset, 
+                request.Limit);
 
             return new LeaderboardApiResponse(view);
         }
 
-        [HttpGet("{game}/{playerName}/score")]
-        public async Task<LeaderboardApiResponse> GetPlayerScore([FromRoute] string game, [FromRoute] string playerName)
+        [HttpPost("score/get")]
+        public async Task<LeaderboardApiResponse> GetPlayerScore([FromBody] GetPlayerScoreRequest request)
         {
-            return new LeaderboardApiResponse(await _leaderboardService.GetScoreForPlayer(game, playerName));
+            return new LeaderboardApiResponse(await _leaderboardService.GetScoreForPlayer(request.Game, request.PlayerName));
         }
 
-        [HttpPut("{game}/{playerName}/score/{score:int}")]
+        [HttpPost("score/put")]
         [CommitOnOk]
-        public async Task<LeaderboardApiResponse> AddOrUpdateScore([FromRoute] string game, [FromRoute] string playerName, [FromRoute] int score)
+        public async Task<LeaderboardApiResponse> AddOrUpdateScore([FromBody] AddOrUpdateScoreRequest request)
         {
-            await _leaderboardService.PutPlayerScore(game, playerName, score);
+            await _leaderboardService.PutPlayerScore(request.Game, request.PlayerName, request.Score, request.IsWinner);
             return new LeaderboardApiResponse();
         }
     }

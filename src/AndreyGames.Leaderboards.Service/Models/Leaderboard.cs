@@ -15,26 +15,34 @@ namespace AndreyGames.Leaderboards.Service.Models
         
         [DefaultValue(true)]
         public bool IsActive { get; set; }
-        
-        public virtual ICollection<Entry> Entries { get; set; }
 
-        public virtual void AddOrUpdateScore(string playerName, long score)
+        public virtual ICollection<Entry> Entries { get; set; } = new List<Entry>();
+
+        public virtual Entry AddOrUpdateScore(string playerName, long score, bool isWinner = false)
         {
-            var existing = Entries.FirstOrDefault(x => x.PlayerName == playerName);
+            var existing = Entries.FirstOrDefault(x => x.PlayerName == playerName && x.IsWinner == isWinner);
             if (existing is null)
             {
-                Entries.Add(new Entry
+                var entry = new Entry
                 {
                     PlayerName = playerName,
                     Score = score,
                     Timestamp = DateTime.Now,
-                });
+                    IsWinner = isWinner,
+                    Leaderboard = this,
+                };
+                
+                Entries.Add(entry);
+
+                return entry;
             }
             else if (existing.Score < score)
             {
                 existing.Score = score;
                 existing.Timestamp = DateTime.Now;
             }
+
+            return existing;
         }
     }
 }

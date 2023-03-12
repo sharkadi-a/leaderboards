@@ -1,27 +1,27 @@
-namespace AndreyGames.Leaderboards.API
+﻿namespace AndreyGames.Leaderboards.API
 {
     /// <summary>
-    /// Entry for each player
+    /// Adds or updates score for the player
     /// </summary>
-    public sealed class LeaderboardEntry
+    public class AddOrUpdateScoreRequest : LeaderboardCryptoRequestBase
     {
         /// <summary>
-        /// Player's rank
+        /// The game
         /// </summary>
-        public int Rank { get; set; }
+        public string Game { get; set; }
 
         /// <summary>
         /// Player's name
         /// </summary>
-        public string Name { get; set; }
+        public string PlayerName { get; set; }
 
         /// <summary>
-        /// Player's max score
+        /// New player score
         /// </summary>
         public long Score { get; set; }
-        
+
         /// <summary>
-        /// True means that the player is a winner
+        /// Is player a winner?
         /// </summary>
         public bool IsWinner { get; set; }
     }

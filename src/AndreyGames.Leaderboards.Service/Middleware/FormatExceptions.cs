@@ -8,11 +8,15 @@ namespace AndreyGames.Leaderboards.Service.Middleware
     {
         public void OnException(ExceptionContext context)
         {
-            if (context.Exception is not LeaderboardsServiceException exception) return;
-
-            context.Result = new LeaderboardApiResponse(exception);
-
-            context.ExceptionHandled = true;
+            if (context.Exception is not LeaderboardsServiceException exception)
+            {
+                context.Result = new LeaderboardApiResponse(context.Exception.InnerException ?? context.Exception);
+            }
+            else
+            {
+                context.Result = new LeaderboardApiResponse(exception);
+                context.ExceptionHandled = true;
+            }
         }
     }
 }

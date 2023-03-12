@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AndreyGames.Leaderboards.Service.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,15 +19,20 @@ namespace AndreyGames.Leaderboards.Service.Api
             _result = new OkResult();
         }
 
-        public LeaderboardApiResponse(LeaderboardsServiceException exception)
+        public LeaderboardApiResponse(Exception exception)
         {
+            if (!exception.Data.Contains("Timestamp"))
+            {
+                exception.Data["Timestamp"] = DateTime.Now.ToString("O");
+            }
+            
             _result = new ObjectResult(new
             {
                 exception.Message,
                 exception.Data
             })
             {
-                StatusCode = exception.HttpStatusCode
+                StatusCode = exception is LeaderboardsServiceException e ? e.HttpStatusCode : 500,
             };
         }
         

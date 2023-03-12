@@ -2,6 +2,31 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>AndreyGames.Leaderboards.API</Title>
+        <Copyright>Sharkadi Andrey (andrey.games) (c) 2023</Copyright>
+        <PackageProjectUrl>https://github.com/sharkadi-a/leaderboards</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/sharkadi-a/leaderboards</RepositoryUrl>
+        <RepositoryType>GIT</RepositoryType>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageLicenseExpression>CC-BY-NC-ND-4.0</PackageLicenseExpression>
+        <Authors>Sharkadi Andrey (andrey.games)</Authors>
+        <Description>andrey.games Leaderboards API Client</Description>
+        <PackageReleaseNotes>Fixing metadata for ProGet</PackageReleaseNotes>
+        <PackageTags>andrey.games leaderboards api</PackageTags>
+
+        <PackageVersion>1.0.3</PackageVersion>
+        <Version>1.0.3</Version>
+        <AssemblyVersion>1.0.3</AssemblyVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\AndreyGames.Leaderboards.API.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\AndreyGames.Leaderboards.API.xml</DocumentationFile>
     </PropertyGroup>
 
 </Project>
