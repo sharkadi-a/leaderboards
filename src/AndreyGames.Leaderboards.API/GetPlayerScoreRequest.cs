@@ -1,8 +1,11 @@
-﻿namespace AndreyGames.Leaderboards.API
+﻿using System;
+
+namespace AndreyGames.Leaderboards.API
 {
     /// <summary>
     /// Return player score
     /// </summary>
+    [Serializable]
     public class GetPlayerScoreRequest : LeaderboardCryptoRequestBase
     {
         /// <summary>

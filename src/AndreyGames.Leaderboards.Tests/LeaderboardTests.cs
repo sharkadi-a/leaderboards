@@ -135,7 +135,7 @@ namespace AndreyGames.Leaderboards.Tests
 
             var leaderboard = await client.GetLeaderboard(game, limit: playerCount);
 
-            leaderboard.Entries.Count.ShouldBe(playerCount);
+            leaderboard.Entries.Length.ShouldBe(playerCount);
 
             var expectedDescending = players.OrderByDescending(x => x.Score).ToArray();
             var actual = leaderboard.Entries.ToArray();

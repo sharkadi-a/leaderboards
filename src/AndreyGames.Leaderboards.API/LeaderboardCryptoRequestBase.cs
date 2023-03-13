@@ -1,8 +1,11 @@
-﻿namespace AndreyGames.Leaderboards.API
+﻿using System;
+
+namespace AndreyGames.Leaderboards.API
 {
     /// <summary>
     /// Base request
     /// </summary>
+    [Serializable]
     public abstract class LeaderboardCryptoRequestBase
     {
         /// <summary>

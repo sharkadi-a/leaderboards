@@ -77,7 +77,7 @@ namespace AndreyGames.Leaderboards.Service.Implementation
                     Score = x.Score,
                     Rank = ++counter,
                     IsWinner = x.IsWinner,
-                }).ToList(),
+                }).ToArray(),
             };
         }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace AndreyGames.Leaderboards.API
@@ -5,6 +6,7 @@ namespace AndreyGames.Leaderboards.API
     /// <summary>
     /// A leaderboard.
     /// </summary>
+    [Serializable]
     public class LeaderboardView
     {
         /// <summary>
@@ -15,6 +17,6 @@ namespace AndreyGames.Leaderboards.API
         /// <summary>
         /// Leaderboard entries
         /// </summary>
-        public ICollection<LeaderboardEntry> Entries { get; set; }
+        public LeaderboardEntry[] Entries { get; set; }
     }
 }
