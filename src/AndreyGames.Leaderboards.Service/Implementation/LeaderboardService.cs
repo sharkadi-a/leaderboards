@@ -52,8 +52,8 @@ namespace AndreyGames.Leaderboards.Service.Implementation
                 throw new LeaderboardNotFound(game);
             }
 
-            var offsetValue = offset ?? 0;
-            var limitValue = limit ?? 20;
+            var offsetValue = Math.Max(0, offset ?? 0);
+            var limitValue = Math.Max(1, limit ?? 20);
 
             IEnumerable<Entry> entries = leaderboard.Entries;
             if (onlyWinners)
