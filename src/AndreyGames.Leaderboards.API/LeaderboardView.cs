@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-
 namespace AndreyGames.Leaderboards.API
 {
     /// <summary>
     /// A leaderboard.
     /// </summary>
-    [Serializable]
     public class LeaderboardView
     {
         /// <summary>

@@ -1,11 +1,8 @@
-﻿using System;
-
-namespace AndreyGames.Leaderboards.API
+﻿namespace AndreyGames.Leaderboards.API
 {
     /// <summary>
     /// Add leaderboard for a game 
     /// </summary>
-    [Serializable]
     public class AddLeaderboardRequest : LeaderboardCryptoRequestBase
     {
         /// <summary>

@@ -1,11 +1,8 @@
-﻿using System;
-
-namespace AndreyGames.Leaderboards.API
+﻿namespace AndreyGames.Leaderboards.API
 {
     /// <summary>
     /// Adds or updates score for the player
     /// </summary>
-    [Serializable]
     public class AddOrUpdateScoreRequest : LeaderboardCryptoRequestBase
     {
         /// <summary>

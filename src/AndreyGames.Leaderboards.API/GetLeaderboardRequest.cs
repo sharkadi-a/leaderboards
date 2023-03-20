@@ -1,11 +1,8 @@
-﻿using System;
-
-namespace AndreyGames.Leaderboards.API
+﻿namespace AndreyGames.Leaderboards.API
 {
     /// <summary>
     /// Get a leaderboard for the game
     /// </summary>
-    [Serializable]
     public class GetLeaderboardRequest : LeaderboardCryptoRequestBase
     {
         /// <summary>

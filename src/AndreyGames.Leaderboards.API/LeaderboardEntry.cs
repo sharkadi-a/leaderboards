@@ -1,11 +1,8 @@
-using System;
-
 namespace AndreyGames.Leaderboards.API
 {
     /// <summary>
     /// Entry for each player
     /// </summary>
-    [Serializable]
     public sealed class LeaderboardEntry
     {
         /// <summary>
