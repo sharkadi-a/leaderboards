@@ -69,7 +69,7 @@ namespace AndreyGames.Leaderboards.API
                 Game = game
             });
 
-            var request = new AddLeaderboardRequest
+            var request = new LeaderboardCryptoRequest
             {
                 Body = _cryptoService.EncryptAsBase64(json,
                     _password,
@@ -90,7 +90,7 @@ namespace AndreyGames.Leaderboards.API
                 PlayerName = playerName
             });
 
-            var request = new GetPlayerScoreRequest
+            var request = new LeaderboardCryptoRequest
             {
                 Body = _cryptoService.EncryptAsBase64(json,
                     _password,
@@ -114,7 +114,7 @@ namespace AndreyGames.Leaderboards.API
                 Limit = limit,
             });
 
-            var request = new GetLeaderboardRequest
+            var request = new LeaderboardCryptoRequest
             {
                 Body = _cryptoService.EncryptAsBase64(json,
                     _password,
@@ -137,7 +137,7 @@ namespace AndreyGames.Leaderboards.API
                 Score = score,
             });
 
-            var request = new AddOrUpdateScoreRequest
+            var request = new LeaderboardCryptoRequest
             {
                 Body = _cryptoService.EncryptAsBase64(json,
                     _password,

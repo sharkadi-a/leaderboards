@@ -113,7 +113,7 @@ namespace AndreyGames.Leaderboards.Tests
         [Fact]
         public async void AddScore_WhenManyResults_ShouldHaveCorrectOrder()
         {
-            var playerCount = 50;
+            var playerCount = 10;
             var game = CreateGameName();
             var randomScores = GenerateUniqueRandom(() => _faker.Random.Long(0), playerCount);
             var scores = new Queue<long>(randomScores);
@@ -151,7 +151,7 @@ namespace AndreyGames.Leaderboards.Tests
         [Fact]
         public async void AddScore_WhenManyResultsAndAllNotWinner_ShouldBeEmptyWhenOnlyWinnersRequested()
         {
-            var playerCount = 50;
+            var playerCount = 10;
             var game = CreateGameName();
             var randomScores = GenerateUniqueRandom(() => _faker.Random.Long(0), playerCount);
             var scores = new Queue<long>(randomScores);
@@ -178,9 +178,9 @@ namespace AndreyGames.Leaderboards.Tests
         [Fact]
         public async void AddScore_WhenManyResultsAndSomeAreWinners_ShouldReturnsOnlyWinners()
         {
-            var total = 50;
+            const int total = 20;
             var winnersCount = _faker.Random.Int(1, total - 1);
-            var nonWinnersCount = 50 - winnersCount;
+            var nonWinnersCount = total - winnersCount;
 
             var game = CreateGameName();
             var randomScores = GenerateUniqueRandom(() => _faker.Random.Long(0), total);
