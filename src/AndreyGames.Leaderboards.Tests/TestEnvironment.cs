@@ -86,9 +86,9 @@ namespace AndreyGames.Leaderboards.Tests
                 return Post(fullUrl, request, token);
             }
 
-            protected override byte[] SerializeJsonBytes<T>(T obj)
+            protected override byte[] SerializeJsonBytes<TBase>(TBase request)
             {
-                return Encoding.Default.GetBytes(JsonSerializer.Serialize(obj));
+                return Encoding.Default.GetBytes(JsonSerializer.Serialize(request));
             }
         }
 

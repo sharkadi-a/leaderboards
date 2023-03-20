@@ -41,11 +41,11 @@ namespace AndreyGames.Leaderboards.API
         protected abstract Task AddOrUpdateScore(string fullUrl,
             LeaderboardCryptoRequestBase request,
             CancellationToken token = default);
-        
+
         /// <summary>
         /// Serializes object to a byte array
         /// </summary>
-        protected abstract byte[] SerializeJsonBytes<T>(T obj);
+        protected abstract byte[] SerializeJsonBytes<TBase>(TBase request) where TBase : LeaderboardCryptoRequestBase;
 
         private string CreateUrl(string path)
         {
