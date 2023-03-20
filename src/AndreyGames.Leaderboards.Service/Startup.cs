@@ -25,6 +25,11 @@ namespace AndreyGames.Leaderboards.Service
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(x => x.AddDefaultPolicy(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()));
+            
             services.AddDbContext<LeaderboardContext>(ctx => ctx
                 .UseLazyLoadingProxies()
                 .UseNpgsql(_configuration.GetConnectionString("Default")));
@@ -58,6 +63,8 @@ namespace AndreyGames.Leaderboards.Service
 
             app.UseMiddleware<RequestLoggingMiddleware>();
 
+            app.UseCors();
+            
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
