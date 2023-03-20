@@ -26,18 +26,22 @@ namespace AndreyGames.Leaderboards.API
 
         private readonly CryptoService _cryptoService = new();
 
-        /// <summary>
-        /// Sends the POST request. Should throw ApiException on error response (!= 200)
-        /// </summary>
-        protected abstract Task<TResult> Post<TRequest, TResult>(string fullUrl, TRequest request, CancellationToken token)
-            where TRequest : LeaderboardCryptoRequestBase;
+        protected abstract Task AddLeaderboard(string fullUrl, 
+            LeaderboardCryptoRequestBase request,
+            CancellationToken token = default);
 
-        /// <summary>
-        /// Sends the POST request and awaits the result. Should throw ApiException on error response (!= 200)
-        /// </summary>
-        protected abstract Task Post<TRequest>(string fullUrl, TRequest request, CancellationToken token)
-            where TRequest : LeaderboardCryptoRequestBase;
+        protected abstract Task<ICollection<LeaderboardEntry>> GetPlayerScore(string fullUrl, 
+            LeaderboardCryptoRequestBase request,
+            CancellationToken token = default);
 
+        protected abstract Task<LeaderboardView> GetLeaderboard(string fullUrl, 
+            LeaderboardCryptoRequestBase request,
+            CancellationToken token = default);
+
+        protected abstract Task AddOrUpdateScore(string fullUrl,
+            LeaderboardCryptoRequestBase request,
+            CancellationToken token = default);
+        
         /// <summary>
         /// Serializes object to a byte array
         /// </summary>
@@ -72,7 +76,7 @@ namespace AndreyGames.Leaderboards.API
                     _seed),
             };
 
-            return Post(CreateUrl(path), request, token);
+            return AddLeaderboard(CreateUrl(path), request, token);
         }
 
         public Task<ICollection<LeaderboardEntry>> GetPlayerScore(string game, string playerName,
@@ -93,7 +97,7 @@ namespace AndreyGames.Leaderboards.API
                     _seed),
             };
 
-            return Post<GetPlayerScoreRequest, ICollection<LeaderboardEntry>>(CreateUrl(path), request, token);
+            return GetPlayerScore(CreateUrl(path), request, token);
         }
 
         public Task<LeaderboardView> GetLeaderboard(string game, bool winnersOnly = false, int? offset = null,
@@ -117,7 +121,7 @@ namespace AndreyGames.Leaderboards.API
                     _seed),
             };
 
-            return Post<GetLeaderboardRequest, LeaderboardView>(CreateUrl(path), request, token);
+            return GetLeaderboard(CreateUrl(path), request, token);
         }
 
         public Task AddOrUpdateScore(string game, string playerName, long score, bool isWinner,
@@ -140,7 +144,7 @@ namespace AndreyGames.Leaderboards.API
                     _seed),
             };
 
-            return Post(CreateUrl(path), request, token);
+            return AddOrUpdateScore(CreateUrl(path), request, token);
         }
     }
 }

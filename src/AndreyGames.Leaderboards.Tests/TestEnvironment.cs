@@ -40,7 +40,7 @@ namespace AndreyGames.Leaderboards.Tests
                 _httpClient.DefaultRequestHeaders.Add(UserHeaderName, userName);
             }
 
-            async protected override Task<TResult> Post<TRequest, TResult>(string fullUrl, TRequest request,
+            async protected Task<TResult> Post<TRequest, TResult>(string fullUrl, TRequest request,
                 CancellationToken token)
             {
                 var httpResponseMessage = await _httpClient.PostAsJsonAsync(fullUrl, request, cancellationToken: token);
@@ -55,7 +55,7 @@ namespace AndreyGames.Leaderboards.Tests
                 throw new ApiException(obj["message"].Value<string>(), dict);
             }
 
-            async protected override Task Post<TRequest>(string fullUrl, TRequest request, CancellationToken token)
+            async protected Task Post<TRequest>(string fullUrl, TRequest request, CancellationToken token)
             {
                 var httpResponseMessage = await _httpClient.PostAsJsonAsync(fullUrl, request, cancellationToken: token);
 
@@ -64,6 +64,26 @@ namespace AndreyGames.Leaderboards.Tests
                 var obj = JObject.Parse(await httpResponseMessage.Content.ReadAsStringAsync());
                 var dict = obj["data"].ToDictionary(x => x.First.Value<string>(), x => x.Last.Value<string>());
                 throw new ApiException(obj["message"].Value<string>(), dict);
+            }
+
+            protected override Task AddLeaderboard(string fullUrl, LeaderboardCryptoRequestBase request, CancellationToken token = default)
+            {
+                return Post(fullUrl, request, token);
+            }
+
+            protected override Task<ICollection<LeaderboardEntry>> GetPlayerScore(string fullUrl, LeaderboardCryptoRequestBase request, CancellationToken token = default)
+            {
+                return Post<LeaderboardCryptoRequestBase, ICollection<LeaderboardEntry>>(fullUrl, request, token);
+            }
+
+            protected override Task<LeaderboardView> GetLeaderboard(string fullUrl, LeaderboardCryptoRequestBase request, CancellationToken token = default)
+            {
+                return Post<LeaderboardCryptoRequestBase, LeaderboardView>(fullUrl, request, token);
+            }
+
+            protected override Task AddOrUpdateScore(string fullUrl, LeaderboardCryptoRequestBase request, CancellationToken token = default)
+            {
+                return Post(fullUrl, request, token);
             }
 
             protected override byte[] SerializeJsonBytes<T>(T obj)
