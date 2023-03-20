@@ -45,7 +45,7 @@ namespace AndreyGames.Leaderboards.API
         /// <summary>
         /// Serializes object to a byte array
         /// </summary>
-        protected abstract byte[] SerializeJsonBytes<TBase>(TBase request) where TBase : LeaderboardCryptoRequestBase;
+        protected abstract byte[] SerializeJsonBytes(object request);
 
         private string CreateUrl(string path)
         {

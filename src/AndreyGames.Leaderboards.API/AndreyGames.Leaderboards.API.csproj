@@ -16,9 +16,9 @@
         <PackageReleaseNotes>Fixing metadata for ProGet</PackageReleaseNotes>
         <PackageTags>andrey.games leaderboards api</PackageTags>
 
-        <Version>1.2.2</Version>
-        <PackageVersion>1.2.2</PackageVersion>
-        <AssemblyVersion>1.2.2</AssemblyVersion>
+        <Version>1.2.3</Version>
+        <PackageVersion>1.2.3</PackageVersion>
+        <AssemblyVersion>1.2.3</AssemblyVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
