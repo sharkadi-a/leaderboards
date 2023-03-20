@@ -3,7 +3,7 @@
     /// <summary>
     /// Add leaderboard for a game 
     /// </summary>
-    public class AddLeaderboardRequest : LeaderboardCryptoRequestBase
+    public class AddLeaderboardRequest : LeaderboardCryptoRequest
     {
         /// <summary>
         /// The name of a game

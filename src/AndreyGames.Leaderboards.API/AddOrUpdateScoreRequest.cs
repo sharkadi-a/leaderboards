@@ -3,7 +3,7 @@
     /// <summary>
     /// Adds or updates score for the player
     /// </summary>
-    public class AddOrUpdateScoreRequest : LeaderboardCryptoRequestBase
+    public class AddOrUpdateScoreRequest : LeaderboardCryptoRequest
     {
         /// <summary>
         /// The game

@@ -27,19 +27,19 @@ namespace AndreyGames.Leaderboards.API
         private readonly CryptoService _cryptoService = new();
 
         protected abstract Task AddLeaderboard(string fullUrl, 
-            LeaderboardCryptoRequestBase request,
+            LeaderboardCryptoRequest request,
             CancellationToken token = default);
 
         protected abstract Task<ICollection<LeaderboardEntry>> GetPlayerScore(string fullUrl, 
-            LeaderboardCryptoRequestBase request,
+            LeaderboardCryptoRequest request,
             CancellationToken token = default);
 
         protected abstract Task<LeaderboardView> GetLeaderboard(string fullUrl, 
-            LeaderboardCryptoRequestBase request,
+            LeaderboardCryptoRequest request,
             CancellationToken token = default);
 
         protected abstract Task AddOrUpdateScore(string fullUrl,
-            LeaderboardCryptoRequestBase request,
+            LeaderboardCryptoRequest request,
             CancellationToken token = default);
 
         /// <summary>

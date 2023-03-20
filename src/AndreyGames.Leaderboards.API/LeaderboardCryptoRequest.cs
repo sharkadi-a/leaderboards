@@ -1,9 +1,9 @@
 ﻿namespace AndreyGames.Leaderboards.API
 {
     /// <summary>
-    /// Base request
+    /// Base crypto request
     /// </summary>
-    public abstract class LeaderboardCryptoRequestBase
+    public class LeaderboardCryptoRequest
     {
         /// <summary>
         /// Encrypted request body

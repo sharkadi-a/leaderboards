@@ -3,7 +3,7 @@
     /// <summary>
     /// Get a leaderboard for the game
     /// </summary>
-    public class GetLeaderboardRequest : LeaderboardCryptoRequestBase
+    public class GetLeaderboardRequest : LeaderboardCryptoRequest
     {
         /// <summary>
         /// The game

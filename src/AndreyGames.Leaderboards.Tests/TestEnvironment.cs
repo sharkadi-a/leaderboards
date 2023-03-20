@@ -66,22 +66,22 @@ namespace AndreyGames.Leaderboards.Tests
                 throw new ApiException(obj["message"].Value<string>(), dict);
             }
 
-            protected override Task AddLeaderboard(string fullUrl, LeaderboardCryptoRequestBase request, CancellationToken token = default)
+            protected override Task AddLeaderboard(string fullUrl, LeaderboardCryptoRequest request, CancellationToken token = default)
             {
                 return Post(fullUrl, request, token);
             }
 
-            protected override Task<ICollection<LeaderboardEntry>> GetPlayerScore(string fullUrl, LeaderboardCryptoRequestBase request, CancellationToken token = default)
+            protected override Task<ICollection<LeaderboardEntry>> GetPlayerScore(string fullUrl, LeaderboardCryptoRequest request, CancellationToken token = default)
             {
-                return Post<LeaderboardCryptoRequestBase, ICollection<LeaderboardEntry>>(fullUrl, request, token);
+                return Post<LeaderboardCryptoRequest, ICollection<LeaderboardEntry>>(fullUrl, request, token);
             }
 
-            protected override Task<LeaderboardView> GetLeaderboard(string fullUrl, LeaderboardCryptoRequestBase request, CancellationToken token = default)
+            protected override Task<LeaderboardView> GetLeaderboard(string fullUrl, LeaderboardCryptoRequest request, CancellationToken token = default)
             {
-                return Post<LeaderboardCryptoRequestBase, LeaderboardView>(fullUrl, request, token);
+                return Post<LeaderboardCryptoRequest, LeaderboardView>(fullUrl, request, token);
             }
 
-            protected override Task AddOrUpdateScore(string fullUrl, LeaderboardCryptoRequestBase request, CancellationToken token = default)
+            protected override Task AddOrUpdateScore(string fullUrl, LeaderboardCryptoRequest request, CancellationToken token = default)
             {
                 return Post(fullUrl, request, token);
             }
