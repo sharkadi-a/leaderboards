@@ -86,6 +86,11 @@ namespace AndreyGames.Leaderboards.Tests
                 return Post(fullUrl, request, token);
             }
 
+            protected override void LogFormat(string message, params object[] args)
+            {
+                
+            }
+
             protected override byte[] SerializeJsonBytes<T>(T data)
             {
                 return Encoding.Default.GetBytes(JsonSerializer.Serialize(data));
@@ -103,6 +108,10 @@ namespace AndreyGames.Leaderboards.Tests
             public LeaderboardsClientWrapper(ILeaderboardsClient leaderboardsClientImplementation)
             {
                 _leaderboardsClientImplementation = leaderboardsClientImplementation;
+            }
+
+            public void SetLoggingDelegate(Action<string, object[]> logFormat)
+            {
             }
 
             public async Task AddLeaderboard(string game, CancellationToken token = default)

@@ -23,18 +23,19 @@ namespace AndreyGames.Leaderboards.API
         private readonly string _baseUrl;
         private readonly string _password;
         private readonly string _seed;
+        private Action<string, object[]> _log;
 
         private readonly CryptoService _cryptoService = new();
 
-        protected abstract Task AddLeaderboard(string fullUrl, 
+        protected abstract Task AddLeaderboard(string fullUrl,
             LeaderboardCryptoRequest request,
             CancellationToken token = default);
 
-        protected abstract Task<ICollection<LeaderboardEntry>> GetPlayerScore(string fullUrl, 
+        protected abstract Task<ICollection<LeaderboardEntry>> GetPlayerScore(string fullUrl,
             LeaderboardCryptoRequest request,
             CancellationToken token = default);
 
-        protected abstract Task<LeaderboardView> GetLeaderboard(string fullUrl, 
+        protected abstract Task<LeaderboardView> GetLeaderboard(string fullUrl,
             LeaderboardCryptoRequest request,
             CancellationToken token = default);
 
@@ -42,10 +43,12 @@ namespace AndreyGames.Leaderboards.API
             LeaderboardCryptoRequest request,
             CancellationToken token = default);
 
+        protected abstract void LogFormat(string message, params object[] args);
+
         /// <summary>
         /// Serializes object to a byte array
         /// </summary>
-        protected abstract byte[] SerializeJsonBytes<T>(T data) where T : LeaderboardCryptoRequest;
+        protected abstract byte[] SerializeJsonBytes<T>(T data);
 
         private string CreateUrl(string path)
         {
@@ -63,7 +66,10 @@ namespace AndreyGames.Leaderboards.API
         public Task AddLeaderboard(string game, CancellationToken token = default)
         {
             const string path = "/add";
-            
+            var url = CreateUrl(path);
+
+            LogFormat("Executing AddLeaderboard command on URL '{0}', game=[{1}]", url, game);
+
             var json = SerializeJsonBytes(new AddLeaderboardRequest
             {
                 Game = game
@@ -76,14 +82,17 @@ namespace AndreyGames.Leaderboards.API
                     _seed),
             };
 
-            return AddLeaderboard(CreateUrl(path), request, token);
+            return AddLeaderboard(url, request, token);
         }
 
         public Task<ICollection<LeaderboardEntry>> GetPlayerScore(string game, string playerName,
             CancellationToken token = default)
         {
             const string path = "/score/get";
-            
+            var url = CreateUrl(path);
+
+            LogFormat("Executing GetPlayerScore command on URL '{0}', game=[{1}], playerName=[2]", url, game, playerName);
+
             var json = SerializeJsonBytes(new GetPlayerScoreRequest
             {
                 Game = game,
@@ -97,7 +106,7 @@ namespace AndreyGames.Leaderboards.API
                     _seed),
             };
 
-            return GetPlayerScore(CreateUrl(path), request, token);
+            return GetPlayerScore(url, request, token);
         }
 
         public Task<LeaderboardView> GetLeaderboard(string game, bool winnersOnly = false, int? offset = null,
@@ -105,7 +114,12 @@ namespace AndreyGames.Leaderboards.API
             CancellationToken token = default)
         {
             const string path = "/get";
-            
+            var url = CreateUrl(path);
+
+            LogFormat(
+                "Executing GetLeaderboard command on URL '{0}', game=[{1}], winnersOnly=[{2}], offset=[{3}], limit=[{4}]",
+                url, game, winnersOnly, offset, limit);
+
             var json = SerializeJsonBytes(new GetLeaderboardRequest
             {
                 Game = game,
@@ -121,14 +135,19 @@ namespace AndreyGames.Leaderboards.API
                     _seed),
             };
 
-            return GetLeaderboard(CreateUrl(path), request, token);
+            return GetLeaderboard(url, request, token);
         }
 
         public Task AddOrUpdateScore(string game, string playerName, long score, bool isWinner,
             CancellationToken token = default)
         {
             const string path = "/score/put";
-            
+            var url = CreateUrl(path);
+
+            LogFormat(
+                "Executing AddOrUpdateScore command on URL '{0}', game=[{1}], playerName=[{2}], score=[{3}], isWinner=[{4}]",
+                url, game, playerName, score, isWinner);
+
             var json = SerializeJsonBytes(new AddOrUpdateScoreRequest
             {
                 Game = game,
@@ -144,7 +163,7 @@ namespace AndreyGames.Leaderboards.API
                     _seed),
             };
 
-            return AddOrUpdateScore(CreateUrl(path), request, token);
+            return AddOrUpdateScore(url, request, token);
         }
     }
 }
