@@ -8,7 +8,7 @@ namespace AndreyGames.Leaderboards.API
     /// <summary>
     /// Base client for the Leaderboard Client. Inherit this class and implement required methods.
     /// </summary>
-    public abstract class LeaderboardClientBase : ILeaderboardsClient
+    public abstract class LeaderboardsClientBase : ILeaderboardsClient
     {
         /// <summary>
         /// Auth header
@@ -28,19 +28,19 @@ namespace AndreyGames.Leaderboards.API
         private readonly CryptoService _cryptoService = new();
 
         protected abstract Task AddLeaderboard(string fullUrl,
-            LeaderboardCryptoRequest request,
+            LeaderboardsCryptoRequest request,
             CancellationToken token = default);
 
         protected abstract Task<ICollection<LeaderboardEntry>> GetPlayerScore(string fullUrl,
-            LeaderboardCryptoRequest request,
+            LeaderboardsCryptoRequest request,
             CancellationToken token = default);
 
         protected abstract Task<LeaderboardView> GetLeaderboard(string fullUrl,
-            LeaderboardCryptoRequest request,
+            LeaderboardsCryptoRequest request,
             CancellationToken token = default);
 
         protected abstract Task AddOrUpdateScore(string fullUrl,
-            LeaderboardCryptoRequest request,
+            LeaderboardsCryptoRequest request,
             CancellationToken token = default);
 
         protected abstract void LogFormat(string message, params object[] args);
@@ -55,7 +55,7 @@ namespace AndreyGames.Leaderboards.API
             return $"{_baseUrl.TrimEnd('/')}/{path.TrimStart('/')}";
         }
 
-        public LeaderboardClientBase(string baseUrl, string userName, string password, string seed)
+        public LeaderboardsClientBase(string baseUrl, string userName, string password, string seed)
         {
             UserName = userName ?? throw new ArgumentNullException(nameof(userName));
             _baseUrl = baseUrl ?? throw new ArgumentNullException(nameof(baseUrl));
@@ -75,7 +75,7 @@ namespace AndreyGames.Leaderboards.API
                 Game = game
             });
 
-            var request = new LeaderboardCryptoRequest
+            var request = new LeaderboardsCryptoRequest
             {
                 Body = _cryptoService.EncryptAsBase64(json,
                     _password,
@@ -99,7 +99,7 @@ namespace AndreyGames.Leaderboards.API
                 PlayerName = playerName
             });
 
-            var request = new LeaderboardCryptoRequest
+            var request = new LeaderboardsCryptoRequest
             {
                 Body = _cryptoService.EncryptAsBase64(json,
                     _password,
@@ -120,7 +120,7 @@ namespace AndreyGames.Leaderboards.API
                 "Executing GetLeaderboard command on URL '{0}', game=[{1}], winnersOnly=[{2}], offset=[{3}], limit=[{4}]",
                 url, game, winnersOnly, offset, limit);
 
-            var json = SerializeJsonBytes(new GetLeaderboardRequest
+            var json = SerializeJsonBytes(new GetLeaderboardsRequest
             {
                 Game = game,
                 WinnersOnly = winnersOnly,
@@ -128,7 +128,7 @@ namespace AndreyGames.Leaderboards.API
                 Limit = limit,
             });
 
-            var request = new LeaderboardCryptoRequest
+            var request = new LeaderboardsCryptoRequest
             {
                 Body = _cryptoService.EncryptAsBase64(json,
                     _password,
@@ -156,7 +156,7 @@ namespace AndreyGames.Leaderboards.API
                 Score = score,
             });
 
-            var request = new LeaderboardCryptoRequest
+            var request = new LeaderboardsCryptoRequest
             {
                 Body = _cryptoService.EncryptAsBase64(json,
                     _password,

@@ -34,7 +34,7 @@ namespace AndreyGames.Leaderboards.Service.Controllers
         }
 
         [HttpPost("get")]
-        public async Task<LeaderboardApiResponse> GetLeaderboard([FromBody] GetLeaderboardRequest request)
+        public async Task<LeaderboardApiResponse> GetLeaderboard([FromBody] GetLeaderboardsRequest request)
         {
             var view = await _leaderboardService.GetLeaderboard(request.Game, 
                 request.WinnersOnly, 

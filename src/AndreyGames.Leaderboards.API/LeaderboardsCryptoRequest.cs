@@ -3,7 +3,7 @@
     /// <summary>
     /// Base crypto request
     /// </summary>
-    public class LeaderboardCryptoRequest
+    public class LeaderboardsCryptoRequest
     {
         /// <summary>
         /// Encrypted request body

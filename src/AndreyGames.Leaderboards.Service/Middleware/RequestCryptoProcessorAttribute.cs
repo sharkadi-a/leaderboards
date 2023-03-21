@@ -15,7 +15,7 @@ namespace AndreyGames.Leaderboards.Service.Middleware
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var onlyCryptoRequests = context.ActionArguments
-                .Where(x => x.Value is LeaderboardCryptoRequest)
+                .Where(x => x.Value is LeaderboardsCryptoRequest)
                 .ToArray();
             
             foreach (var argument in onlyCryptoRequests)
@@ -41,7 +41,7 @@ namespace AndreyGames.Leaderboards.Service.Middleware
                 }
 
                 var iv = configuration["CryptoVectorString"];
-                var cryptoRequest = (LeaderboardCryptoRequest)argument.Value;
+                var cryptoRequest = (LeaderboardsCryptoRequest)argument.Value;
                 var cryptoService = context.HttpContext.RequestServices.GetRequiredService<ICryptoService>();
 
                 try

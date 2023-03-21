@@ -3,7 +3,7 @@
     /// <summary>
     /// Return player score
     /// </summary>
-    public class GetPlayerScoreRequest : LeaderboardCryptoRequest
+    public class GetPlayerScoreRequest : LeaderboardsCryptoRequest
     {
         /// <summary>
         /// The game
