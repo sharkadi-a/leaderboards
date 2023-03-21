@@ -16,24 +16,24 @@
         <PackageReleaseNotes>Fixing metadata for ProGet</PackageReleaseNotes>
         <PackageTags>andrey.games leaderboards api</PackageTags>
 
-        <Version>1.5.0</Version>
-        <PackageVersion>1.5.0</PackageVersion>
-        <AssemblyVersion>1.5.0</AssemblyVersion>
+        <Version>1.5.1</Version>
+        <PackageVersion>1.5.1</PackageVersion>
+        <AssemblyVersion>1.5.1</AssemblyVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <DocumentationFile>bin\Debug\AndreyGames.Leaderboards.API.xml</DocumentationFile>
+        <DocumentationFile>bin\Debug\AndreyGames.Leaderboards.API.xml</DocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <DocumentationFile>bin\Release\AndreyGames.Leaderboards.API.xml</DocumentationFile>
+        <DocumentationFile>bin\Release\AndreyGames.Leaderboards.API.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="link.xml" />
-      <Content Include="link.xml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
+        <None Remove="link.xml"/>
+        <Content Include="link.xml" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 </Project>
