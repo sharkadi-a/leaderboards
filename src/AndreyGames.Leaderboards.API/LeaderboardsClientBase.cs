@@ -109,7 +109,10 @@ namespace AndreyGames.Leaderboards.API
             return GetPlayerScore(url, request, token);
         }
 
-        public Task<LeaderboardView> GetLeaderboard(string game, bool winnersOnly = false, int? offset = null,
+        public Task<LeaderboardView> GetLeaderboard(string game, 
+            bool winnersOnly = false, 
+            TimeFrame? timeFrame = default,
+            int? offset = null,
             int? limit = null,
             CancellationToken token = default)
         {
@@ -117,8 +120,8 @@ namespace AndreyGames.Leaderboards.API
             var url = CreateUrl(path);
 
             LogFormat(
-                "Executing GetLeaderboard command on URL '{0}', game=[{1}], winnersOnly=[{2}], offset=[{3}], limit=[{4}]",
-                url, game, winnersOnly, offset, limit);
+                "Executing GetLeaderboard command on URL '{0}', game=[{1}], winnersOnly=[{2}], timeFrame=[{3}] offset=[{4}], limit=[{5}]",
+                url, game, winnersOnly, timeFrame, offset, limit);
 
             var json = SerializeJsonBytes(new GetLeaderboardsRequest
             {
@@ -126,6 +129,7 @@ namespace AndreyGames.Leaderboards.API
                 WinnersOnly = winnersOnly,
                 Offset = offset,
                 Limit = limit,
+                Time = timeFrame,
             });
 
             var request = new LeaderboardsCryptoRequest

@@ -44,6 +44,8 @@ namespace AndreyGames.Leaderboards.Service
             
             services.AddScoped<ILeaderboardService, LeaderboardService>();
             services.AddSingleton<ICryptoService, CryptoService>();
+            services.AddSingleton<ITimeFrameConverter, TimeFrameConverter>();
+            services.AddSingleton<ISystemClock, SystemClock>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

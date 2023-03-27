@@ -170,7 +170,7 @@ namespace AndreyGames.Leaderboards.Tests
                 await client.AddOrUpdateScore(game, player.Name, player.Score, false);
             }
 
-            var leaderboard = await client.GetLeaderboard(game, limit: playerCount, winnersOnly: true);
+            var leaderboard = await client.GetLeaderboard(game, winnersOnly: true, limit: playerCount);
 
             leaderboard.Entries.ShouldBeEmpty();
         }

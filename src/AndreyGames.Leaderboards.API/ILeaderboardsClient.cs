@@ -26,7 +26,7 @@ namespace AndreyGames.Leaderboards.API
         /// Get leaderboard for the game
         /// </summary>
         /// <exception cref="ApiException">Something went wrong on the server side.</exception>
-        Task<LeaderboardView> GetLeaderboard(string game, bool winnersOnly = false, int? offset = null, int? limit = null, CancellationToken token = default);
+        Task<LeaderboardView> GetLeaderboard(string game, bool winnersOnly = false, TimeFrame? timeFrame = default, int? offset = null, int? limit = null, CancellationToken token = default);
         
         /// <summary>
         /// Add or update score for the game and player 

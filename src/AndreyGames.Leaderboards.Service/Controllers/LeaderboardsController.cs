@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AndreyGames.Leaderboards.API;
 using AndreyGames.Leaderboards.Service.Abstract;
 using AndreyGames.Leaderboards.Service.Api;
@@ -12,13 +13,19 @@ namespace AndreyGames.Leaderboards.Service.Controllers
     [FormatExceptions]
     [Produces("application/json")]
     [RequestCryptoProcessor]
-    public class LeaderboardsController: ControllerBase
+    public class LeaderboardsController : ControllerBase
     {
         private readonly ILeaderboardService _leaderboardService;
+        private readonly ITimeFrameConverter _timeFrameConverter;
+        private readonly ISystemClock _systemClock;
 
-        public LeaderboardsController(ILeaderboardService leaderboardService)
+        public LeaderboardsController(ILeaderboardService leaderboardService, 
+            ITimeFrameConverter timeFrameConverter,
+            ISystemClock systemClock)
         {
             _leaderboardService = leaderboardService;
+            _timeFrameConverter = timeFrameConverter;
+            _systemClock = systemClock;
         }
 
         [HttpPost("add")]
@@ -36,9 +43,14 @@ namespace AndreyGames.Leaderboards.Service.Controllers
         [HttpPost("get")]
         public async Task<LeaderboardApiResponse> GetLeaderboard([FromBody] GetLeaderboardsRequest request)
         {
-            var view = await _leaderboardService.GetLeaderboard(request.Game, 
-                request.WinnersOnly, 
-                request.Offset, 
+            var startDate = _timeFrameConverter.GetStartDate(request.Time ?? TimeFrame.Infinite);
+            var endDate = _timeFrameConverter.GetEndDate(request.Time ?? TimeFrame.Infinite);
+
+            var view = await _leaderboardService.GetLeaderboard(request.Game,
+                startDate,
+                endDate,
+                request.WinnersOnly,
+                request.Offset,
                 request.Limit);
 
             return new LeaderboardApiResponse(view);
@@ -47,14 +59,16 @@ namespace AndreyGames.Leaderboards.Service.Controllers
         [HttpPost("score/get")]
         public async Task<LeaderboardApiResponse> GetPlayerScore([FromBody] GetPlayerScoreRequest request)
         {
-            return new LeaderboardApiResponse(await _leaderboardService.GetScoreForPlayer(request.Game, request.PlayerName));
+            return new LeaderboardApiResponse(
+                await _leaderboardService.GetScoreForPlayer(request.Game, request.PlayerName));
         }
 
         [HttpPost("score/put")]
         [CommitOnOk]
         public async Task<LeaderboardApiResponse> AddOrUpdateScore([FromBody] AddOrUpdateScoreRequest request)
         {
-            await _leaderboardService.PutPlayerScore(request.Game, request.PlayerName, request.Score, request.IsWinner);
+            await _leaderboardService.PutPlayerScore(request.Game, _systemClock.UtcNow(), request.PlayerName, request.Score,
+                request.IsWinner);
             return new LeaderboardApiResponse();
         }
     }

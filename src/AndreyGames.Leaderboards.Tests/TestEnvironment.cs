@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -8,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AndreyGames.Leaderboards.API;
 using AndreyGames.Leaderboards.Service;
+using AndreyGames.Leaderboards.Service.Abstract;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -110,10 +110,6 @@ namespace AndreyGames.Leaderboards.Tests
                 _leaderboardsClientImplementation = leaderboardsClientImplementation;
             }
 
-            public void SetLoggingDelegate(Action<string, object[]> logFormat)
-            {
-            }
-
             public async Task AddLeaderboard(string game, CancellationToken token = default)
             {
                 await _leaderboardsClientImplementation.AddLeaderboard(game, token);
@@ -126,11 +122,12 @@ namespace AndreyGames.Leaderboards.Tests
                 return _leaderboardsClientImplementation.GetPlayerScore(game, playerName, token);
             }
 
-            public Task<LeaderboardView> GetLeaderboard(string game, bool winnersOnly = false, int? offset = null,
+            public Task<LeaderboardView> GetLeaderboard(string game, bool winnersOnly = false,
+                TimeFrame? timeFrame = default, int? offset = null,
                 int? limit = null,
                 CancellationToken token = default)
             {
-                return _leaderboardsClientImplementation.GetLeaderboard(game, winnersOnly, offset, limit, token);
+                return _leaderboardsClientImplementation.GetLeaderboard(game, winnersOnly, offset: offset, limit: limit, token: token);
             }
 
             public Task AddOrUpdateScore(string game, string playerName, long score, bool isWinner,
@@ -140,8 +137,10 @@ namespace AndreyGames.Leaderboards.Tests
             }
         }
 
-        private LinkedList<LeaderboardsClientWrapper> _clients = new();
+        private readonly LinkedList<LeaderboardsClientWrapper> _clients = new();
 
+        public TestSystemClock Clock { get; } = new();
+        
         public ILeaderboardsClient CreateLeaderboardsClient()
         {
             var configuration = Services.GetRequiredService<IConfiguration>();
@@ -163,6 +162,10 @@ namespace AndreyGames.Leaderboards.Tests
                 .UseConnectionString(connectionString);
 
             builder.UseTestServer()
+                .ConfigureServices(x =>
+                {
+                    x.AddSingleton<ISystemClock>(_ => Clock);
+                })
                 .ConfigureLogging(logging => logging.ClearProviders())
                 .ConfigureAppConfiguration(appBuilder => appBuilder.AddJsonStream(config.Build()));
         }

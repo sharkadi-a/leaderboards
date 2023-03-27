@@ -24,5 +24,10 @@
         /// Return only winners
         /// </summary>
         public bool WinnersOnly { get; set; }
+        
+        /// <summary>
+        /// Time frame for data
+        /// </summary>
+        public TimeFrame? Time { get; set; }
     }
 }
