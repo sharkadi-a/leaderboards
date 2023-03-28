@@ -1,8 +1,6 @@
 ﻿name: .NET 5 project deploy
 
 on:
-  push:
-    branches: [ "main" ]
   workflow_dispatch: { }
   workflow_run:
     workflows: [ ".NET 5 project build" ]
