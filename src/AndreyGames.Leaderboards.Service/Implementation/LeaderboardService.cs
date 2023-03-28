@@ -40,9 +40,18 @@ namespace AndreyGames.Leaderboards.Service.Implementation
 
             await _context.Leaderboards.AddAsync(leaderboard);
         }
-        
-        public async Task<LeaderboardView> GetLeaderboard(string game, bool onlyWinners = false, int? offset = null, int? limit = null)
+
+        public async Task<LeaderboardView> GetLeaderboard(string game, DateTime? start = default, DateTime? end = default, bool onlyWinners = false,
+            int? offset = null, int? limit = null)
         {
+            if (start.HasValue && end.HasValue)
+            {
+                if (start.Value > end.Value)
+                {
+                    throw new InvalidTimeframeException();
+                }
+            }
+            
             var leaderboard = await _context
                 .Leaderboards
                 .FirstOrDefaultAsync(x => x.Game == game && x.IsActive);
@@ -56,6 +65,17 @@ namespace AndreyGames.Leaderboards.Service.Implementation
             var limitValue = Math.Max(1, limit ?? 20);
 
             IEnumerable<Entry> entries = leaderboard.Entries;
+            
+            if (start.HasValue)
+            {
+                entries = entries.Where(x => x.Timestamp >= start.Value);
+            }
+
+            if (end.HasValue)
+            {
+                entries = entries.Where(x => x.Timestamp < end.Value);
+            }
+            
             if (onlyWinners)
             {
                 entries = entries.Where(x => x.IsWinner);
@@ -133,7 +153,7 @@ namespace AndreyGames.Leaderboards.Service.Implementation
             return list;
         }
         
-        public async Task PutPlayerScore(string game, string playerName, long score, bool isWinner = false)
+        public async Task PutPlayerScore(string game, DateTime date, string playerName, long score, bool isWinner = false)
         {
             var leaderboard = await _context.Leaderboards.FirstOrDefaultAsync(x => x.Game == game && x.IsActive);
 
@@ -142,7 +162,7 @@ namespace AndreyGames.Leaderboards.Service.Implementation
                 throw new LeaderboardNotFound(game);
             }
 
-            leaderboard.AddOrUpdateScore(playerName, score, isWinner);
+            leaderboard.AddOrUpdateScore(playerName, date, score, isWinner);
         }
     }
 }

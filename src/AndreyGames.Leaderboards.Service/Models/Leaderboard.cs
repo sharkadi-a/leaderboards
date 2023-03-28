@@ -18,7 +18,7 @@ namespace AndreyGames.Leaderboards.Service.Models
 
         public virtual ICollection<Entry> Entries { get; set; } = new List<Entry>();
 
-        public virtual Entry AddOrUpdateScore(string playerName, long score, bool isWinner = false)
+        public virtual Entry AddOrUpdateScore(string playerName, DateTime date, long score, bool isWinner = false)
         {
             var existing = Entries.FirstOrDefault(x => x.PlayerName == playerName && x.IsWinner == isWinner);
             if (existing is null)
@@ -27,7 +27,7 @@ namespace AndreyGames.Leaderboards.Service.Models
                 {
                     PlayerName = playerName,
                     Score = score,
-                    Timestamp = DateTime.Now,
+                    Timestamp = date,
                     IsWinner = isWinner,
                     Leaderboard = this,
                 };
@@ -36,7 +36,8 @@ namespace AndreyGames.Leaderboards.Service.Models
 
                 return entry;
             }
-            else if (existing.Score < score)
+            
+            if (existing.Score < score)
             {
                 existing.Score = score;
                 existing.Timestamp = DateTime.Now;

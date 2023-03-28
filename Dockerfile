@@ -3,12 +3,14 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS tests
 WORKDIR /src
 COPY ["/src", "/src"]
 RUN echo $USERNAME
 RUN dotnet test --verbosity normal
 RUN dotnet restore "AndreyGames.Leaderboards.Service/AndreyGames.Leaderboards.Service.csproj"
+
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 COPY . .
 WORKDIR "/src/AndreyGames.Leaderboards.Service"
 RUN dotnet build "AndreyGames.Leaderboards.Service.csproj" -c Release -o /app/build
