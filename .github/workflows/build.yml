@@ -22,3 +22,11 @@ jobs:
       - name: Build the Docker image
         run: docker build . --file Dockerfile --target tests --build-arg NAMESPACE="${{ github.repository_owner }}" --build-arg NUGET_KEY="${{ secrets.CR_PAT }}" --tag ${{ vars.PROJECT_NAME }}:latest --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:${{ github.run_number }}.${{ github.run_attempt }} --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:latest
         if: github.event_name == 'pull_request'
+      
+      - name: Auth into Docker
+        run: command echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+        if: github.event_name != 'pull_request'
+
+      - name: Push into Docker Repository
+        run: docker push ghcr.io/sharkadi-a/${{ vars.PROJECT_NAME }}
+        if: github.event_name != 'pull_request'        

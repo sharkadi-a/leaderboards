@@ -14,12 +14,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Auth into Docker
-        run: command echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-
-      - name: Push into Docker Repository
-        run: docker push ghcr.io/sharkadi-a/${{ vars.PROJECT_NAME }}
-
       - name: Copy Docker Compose
         uses: appleboy/scp-action@master
         with:
