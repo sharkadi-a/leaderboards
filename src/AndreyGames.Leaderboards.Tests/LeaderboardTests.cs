@@ -142,6 +142,7 @@ namespace AndreyGames.Leaderboards.Tests
 
             for (var i = 0; i < expectedDescending.Length; i++)
             {
+                actual[i].Rank.ShouldBe(i + 1);
                 expectedDescending[i].Name.ShouldBe(actual[i].Name);
                 expectedDescending[i].Score.ShouldBe(actual[i].Score);
                 expectedDescending[i].IsWinner.ShouldBe(actual[i].IsWinner);
