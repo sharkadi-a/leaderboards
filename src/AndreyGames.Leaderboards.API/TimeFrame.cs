@@ -21,8 +21,13 @@
         Week = 2,
         
         /// <summary>
+        /// This month
+        /// </summary>
+        Month = 3,
+        
+        /// <summary>
         /// Today
         /// </summary>
-        Today = 3,
+        Today = 4,
     }
 }

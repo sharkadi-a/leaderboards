@@ -72,6 +72,7 @@ namespace AndreyGames.Leaderboards.Tests
             _testEnvironment.Clock.CurrentTime = date3;
             await client.AddOrUpdateScore(game, player3, score3, false);
 
+            _testEnvironment.Clock.CurrentTime = utcNow;
             var leaderboard = await client.GetLeaderboard(game, timeFrame: TimeFrame.Today);
             
             leaderboard.Entries.Length.ShouldBe(1);
@@ -110,7 +111,8 @@ namespace AndreyGames.Leaderboards.Tests
             _testEnvironment.Clock.CurrentTime = date3;
             await client.AddOrUpdateScore(game, player3, score3, false);
 
-            var leaderboard = await client.GetLeaderboard(game, timeFrame: TimeFrame.Today);
+            _testEnvironment.Clock.CurrentTime = utcNow;
+            var leaderboard = await client.GetLeaderboard(game, timeFrame: TimeFrame.Week);
             
             leaderboard.Entries.Length.ShouldBe(1);
             leaderboard.Entries.ShouldContain(x => x.Name == player1);
@@ -148,7 +150,8 @@ namespace AndreyGames.Leaderboards.Tests
             _testEnvironment.Clock.CurrentTime = date3;
             await client.AddOrUpdateScore(game, player3, score3, false);
 
-            var leaderboard = await client.GetLeaderboard(game, timeFrame: TimeFrame.Today);
+            _testEnvironment.Clock.CurrentTime = utcNow;
+            var leaderboard = await client.GetLeaderboard(game, timeFrame: TimeFrame.Month);
             
             leaderboard.Entries.Length.ShouldBe(1);
             leaderboard.Entries.ShouldContain(x => x.Name == player1);
@@ -186,7 +189,8 @@ namespace AndreyGames.Leaderboards.Tests
             _testEnvironment.Clock.CurrentTime = date3;
             await client.AddOrUpdateScore(game, player3, score3, false);
 
-            var leaderboard = await client.GetLeaderboard(game, timeFrame: TimeFrame.Today);
+            _testEnvironment.Clock.CurrentTime = utcNow;
+            var leaderboard = await client.GetLeaderboard(game, timeFrame: TimeFrame.Year);
             
             leaderboard.Entries.Length.ShouldBe(1);
             leaderboard.Entries.ShouldContain(x => x.Name == player1);
