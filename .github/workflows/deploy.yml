@@ -40,8 +40,10 @@ jobs:
       - name: Create .env file
         uses: ozaytsev86/create-env-file@v1
         with:
-          ENV_TEST_API_KEY: ${{ secrets.TEST_API_KEY }}
-          ENV_ANOTHER_KEY: ${{ secrets.ANOTHER_KEY }}
+          SVC_CONNECTION_STRING: ${{ secrets.SVC_CONNECTION_STRING }}
+          SVC_USER_NAME: ${{ secrets.SVC_USER_NAME }}
+          SVC_PASSWORD: ${{ secrets.SVC_PASSWORD }}
+          SVC_VECTOR: ${{ secrets.SVC_VECTOR }}
         
       - name: Copy .env file
         uses: appleboy/scp-action@master
