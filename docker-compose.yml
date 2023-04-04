@@ -5,10 +5,10 @@ services:
     container_name: leaderboards
     image: ghcr.io/sharkadi-a/leaderboards:latest
     environment:
-      - ConnectionStrings__Default=${PGSQL_CONNECTION_STRING}
-      - Auth__0__UserName=${USER_NAME}
-      - Auth__0__Password=${PASSWORD}
-      - CryptoVectorString=${VECTOR}
+      - ConnectionStrings__Default=${SVC_CONNECTION_STRING}
+      - Auth__0__UserName=${SVC_USER_NAME}
+      - Auth__0__Password=${SVC_PASSWORD}
+      - CryptoVectorString=${SVC_VECTOR}
     ports:
       - "6000:80"
     networks:
