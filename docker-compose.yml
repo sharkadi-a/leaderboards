@@ -5,10 +5,10 @@ services:
     container_name: leaderboards
     image: ghcr.io/sharkadi-a/leaderboards:latest
     environment:
-      - ConnectionStrings__Default=User ID=user;Password=87aec3dbbc;Host=postgres;Port=5432;Database=leaderboards;Pooling=true;
-      - Auth__0__UserName=ApiClient
-      - Auth__0__Password=opIq2QupHRbWEtGuBaHf
-      - CryptoVectorString=uyF4K4OCL7FY3yF8zDCF
+      - ConnectionStrings__Default=${PGSQL_CONNECTION_STRING}
+      - Auth__0__UserName=${USER_NAME}
+      - Auth__0__Password=${PASSWORD}
+      - CryptoVectorString=${VECTOR}
     ports:
       - "6000:80"
     networks:
