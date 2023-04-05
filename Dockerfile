@@ -6,7 +6,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS tests
 WORKDIR /src
 COPY ["/src", "/src"]
-RUN echo $USERNAME
+ARG TEST_DB_CONNECTION_STRING
 RUN dotnet test --verbosity normal
 RUN dotnet restore "AndreyGames.Leaderboards.Service/AndreyGames.Leaderboards.Service.csproj"
 

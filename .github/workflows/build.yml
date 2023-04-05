@@ -15,12 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --build-arg NAMESPACE="${{ github.repository_owner }}" --build-arg NUGET_KEY="${{ secrets.CR_PAT }}" --tag ${{ vars.PROJECT_NAME }}:latest --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:${{ github.run_number }}.${{ github.run_attempt }} --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:latest
+        run: docker build . --file Dockerfile --build-arg TEST_DB_CONNECTION_STRING="${{ secrets.TEST_DB_CONNECTION_STRING }}" --build-arg NAMESPACE="${{ github.repository_owner }}" --build-arg NUGET_KEY="${{ secrets.CR_PAT }}" --tag ${{ vars.PROJECT_NAME }}:latest --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:${{ github.run_number }}.${{ github.run_attempt }} --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:latest
         if: github.event_name != 'pull_request'
 
       - uses: actions/checkout@v3
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile --target tests --build-arg NAMESPACE="${{ github.repository_owner }}" --build-arg NUGET_KEY="${{ secrets.CR_PAT }}" --tag ${{ vars.PROJECT_NAME }}:latest --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:${{ github.run_number }}.${{ github.run_attempt }} --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:latest
+      - name: Build the Docker image and run tests only
+        run: docker build . --file Dockerfile --target tests --build-arg TEST_DB_CONNECTION_STRING="${{ secrets.TEST_DB_CONNECTION_STRING }}" --build-arg NAMESPACE="${{ github.repository_owner }}" --build-arg NUGET_KEY="${{ secrets.CR_PAT }}" --tag ${{ vars.PROJECT_NAME }}:latest --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:${{ github.run_number }}.${{ github.run_attempt }} --tag ghcr.io/${{ github.repository_owner }}/${{ vars.PROJECT_NAME }}:latest
         if: github.event_name == 'pull_request'
       
       - name: Auth into Docker
