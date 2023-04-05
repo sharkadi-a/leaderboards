@@ -160,3 +160,4 @@ obj/
 packages/
 .vs/
 .idea/
+appsettings.Development.json
