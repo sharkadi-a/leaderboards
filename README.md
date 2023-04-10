@@ -1,7 +1,7 @@
 # Leaderboards API and Service
 
-Leaderboards API for my personal projects (games). The source code is
-provided AS IS, so use it for your own good (or bad, hehe).
+This is a repository for the Leaderboards API for my personal projects (games). 
+The source code is provided AS IS, so use it for your own good (or bad, hehe).
 
 The primary usage are Unity games. You can use it for your own projects. 
 To do that, you should use API project and build you own client library. 
