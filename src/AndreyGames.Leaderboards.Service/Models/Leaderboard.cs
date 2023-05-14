@@ -37,7 +37,7 @@ namespace AndreyGames.Leaderboards.Service.Models
                 return entry;
             }
             
-            if (existing.Score < score)
+            if (existing.Score < score && existing.Timestamp <= date)
             {
                 existing.Score = score;
                 existing.Timestamp = DateTime.Now;
