@@ -67,8 +67,13 @@ namespace AndreyGames.Leaderboards.Service.Controllers
         [CommitOnOk]
         public async Task<LeaderboardApiResponse> AddOrUpdateScore([FromBody] AddOrUpdateScoreRequest request)
         {
-            await _leaderboardService.PutPlayerScore(request.Game, _systemClock.UtcNow(), request.PlayerName, request.Score,
-                request.IsWinner);
+            await _leaderboardService.PutPlayerScore(request.Game,
+                _systemClock.UtcNow(),
+                request.PlayerName,
+                request.Score,
+                request.IsWinner,
+                request.IsFraud);
+            
             return new LeaderboardApiResponse();
         }
     }

@@ -24,5 +24,10 @@
         /// Is player a winner?
         /// </summary>
         public bool IsWinner { get; set; }
+        
+        /// <summary>
+        /// Is the result actually a fraud? If true that means request will be silently dropped. A security measure.
+        /// </summary>
+        public bool IsFraud { get; set; }
     }
 }

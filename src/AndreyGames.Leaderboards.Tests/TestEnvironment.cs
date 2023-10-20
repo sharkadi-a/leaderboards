@@ -132,9 +132,10 @@ namespace AndreyGames.Leaderboards.Tests
             }
 
             public Task AddOrUpdateScore(string game, string playerName, long score, bool isWinner,
+                bool isFraud,
                 CancellationToken token = default)
             {
-                return _leaderboardsClientImplementation.AddOrUpdateScore(game, playerName, score, isWinner, token);
+                return _leaderboardsClientImplementation.AddOrUpdateScore(game, playerName, score, isWinner, isFraud, token);
             }
         }
 

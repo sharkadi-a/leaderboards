@@ -33,7 +33,7 @@ namespace AndreyGames.Leaderboards.Tests
             var client = _testEnvironment.CreateLeaderboardsClient();
 
             await client.AddLeaderboard(game);
-            await client.AddOrUpdateScore(game, player, score, false);
+            await client.AddOrUpdateScore(game, player, score, false, false);
 
             var leaderboard = await client.GetLeaderboard(game, timeFrame: timeFrame);
 
@@ -64,13 +64,13 @@ namespace AndreyGames.Leaderboards.Tests
             await client.AddLeaderboard(game);
 
             _testEnvironment.Clock.CurrentTime = date1;
-            await client.AddOrUpdateScore(game, player1, score1, false);
+            await client.AddOrUpdateScore(game, player1, score1, false, false);
 
             _testEnvironment.Clock.CurrentTime = date2;
-            await client.AddOrUpdateScore(game, player2, score2, false);
+            await client.AddOrUpdateScore(game, player2, score2, false, false);
 
             _testEnvironment.Clock.CurrentTime = date3;
-            await client.AddOrUpdateScore(game, player3, score3, false);
+            await client.AddOrUpdateScore(game, player3, score3, false, false);
 
             _testEnvironment.Clock.CurrentTime = utcNow;
             var leaderboard = await client.GetLeaderboard(game, timeFrame: TimeFrame.Today);
@@ -103,13 +103,13 @@ namespace AndreyGames.Leaderboards.Tests
             await client.AddLeaderboard(game);
 
             _testEnvironment.Clock.CurrentTime = date1;
-            await client.AddOrUpdateScore(game, player1, score1, false);
+            await client.AddOrUpdateScore(game, player1, score1, false, false);
 
             _testEnvironment.Clock.CurrentTime = date2;
-            await client.AddOrUpdateScore(game, player2, score2, false);
+            await client.AddOrUpdateScore(game, player2, score2, false, false);
 
             _testEnvironment.Clock.CurrentTime = date3;
-            await client.AddOrUpdateScore(game, player3, score3, false);
+            await client.AddOrUpdateScore(game, player3, score3, false, false);
 
             _testEnvironment.Clock.CurrentTime = utcNow;
             var leaderboard = await client.GetLeaderboard(game, timeFrame: TimeFrame.Week);
@@ -142,13 +142,13 @@ namespace AndreyGames.Leaderboards.Tests
             await client.AddLeaderboard(game);
 
             _testEnvironment.Clock.CurrentTime = date1;
-            await client.AddOrUpdateScore(game, player1, score1, false);
+            await client.AddOrUpdateScore(game, player1, score1, false, false);
 
             _testEnvironment.Clock.CurrentTime = date2;
-            await client.AddOrUpdateScore(game, player2, score2, false);
+            await client.AddOrUpdateScore(game, player2, score2, false, false);
 
             _testEnvironment.Clock.CurrentTime = date3;
-            await client.AddOrUpdateScore(game, player3, score3, false);
+            await client.AddOrUpdateScore(game, player3, score3, false, false);
 
             _testEnvironment.Clock.CurrentTime = utcNow;
             var leaderboard = await client.GetLeaderboard(game, timeFrame: TimeFrame.Month);
@@ -181,13 +181,13 @@ namespace AndreyGames.Leaderboards.Tests
             await client.AddLeaderboard(game);
 
             _testEnvironment.Clock.CurrentTime = date1;
-            await client.AddOrUpdateScore(game, player1, score1, false);
+            await client.AddOrUpdateScore(game, player1, score1, false, false);
 
             _testEnvironment.Clock.CurrentTime = date2;
-            await client.AddOrUpdateScore(game, player2, score2, false);
+            await client.AddOrUpdateScore(game, player2, score2, false, false);
 
             _testEnvironment.Clock.CurrentTime = date3;
-            await client.AddOrUpdateScore(game, player3, score3, false);
+            await client.AddOrUpdateScore(game, player3, score3, false, false);
 
             _testEnvironment.Clock.CurrentTime = utcNow;
             var leaderboard = await client.GetLeaderboard(game, timeFrame: TimeFrame.Year);

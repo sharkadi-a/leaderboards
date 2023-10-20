@@ -57,7 +57,7 @@ namespace AndreyGames.Leaderboards.Tests
             var client = _testEnvironment.CreateLeaderboardsClient();
 
             await client.AddLeaderboard(game);
-            await client.AddOrUpdateScore(game, player, score, false);
+            await client.AddOrUpdateScore(game, player, score, false, false);
 
             var leaderboard = await client.GetLeaderboard(game);
 
@@ -75,16 +75,40 @@ namespace AndreyGames.Leaderboards.Tests
 
             await client.AddLeaderboard(game);
 
-            await client.AddOrUpdateScore(game, player, score1, false);
+            await client.AddOrUpdateScore(game, player, score1, false, false);
             var leaderboard1 = await client.GetLeaderboard(game);
             var result1 = leaderboard1.Entries.Single(x => x.Name == player);
 
-            await client.AddOrUpdateScore(game, player, score2, false);
+            await client.AddOrUpdateScore(game, player, score2, false, false);
             var leaderboard2 = await client.GetLeaderboard(game);
             var result2 = leaderboard2.Entries.Single(x => x.Name == player);
 
             result1.Score.ShouldBe(score1);
             result2.Score.ShouldBe(score2);
+        }
+        
+        [Fact]
+        public async void AddScoreWithFraud_ThenUpdateHigherScoreAndGetLeaderboard_ShouldRemainScore()
+        {
+            var game = CreateGameName();
+            var player = _faker.Person.FullName;
+            var score1 = (int)_faker.Finance.Amount(100, 10000, 0);
+            var score2 = (int)_faker.Finance.Amount(score1, 10001, 0);
+            var client = _testEnvironment.CreateLeaderboardsClient();
+
+            await client.AddLeaderboard(game);
+
+            await client.AddOrUpdateScore(game, player, score1, false, false);
+            var leaderboard1 = await client.GetLeaderboard(game);
+            var result1 = leaderboard1.Entries.Single(x => x.Name == player);
+
+            await client.AddOrUpdateScore(game, player, score2, false, true);
+            var leaderboard2 = await client.GetLeaderboard(game);
+            var result2 = leaderboard2.Entries.Single(x => x.Name == player);
+
+            result1.Score.ShouldBe(score1);
+            result2.Score.ShouldNotBe(score2);
+            result2.Score.ShouldBe(score1);
         }
 
         [Fact]
@@ -98,11 +122,11 @@ namespace AndreyGames.Leaderboards.Tests
 
             await client.AddLeaderboard(game);
 
-            await client.AddOrUpdateScore(game, player, score1, false);
+            await client.AddOrUpdateScore(game, player, score1, false, false);
             var leaderboard1 = await client.GetLeaderboard(game);
             var result1 = leaderboard1.Entries.Single(x => x.Name == player);
 
-            await client.AddOrUpdateScore(game, player, score2, false);
+            await client.AddOrUpdateScore(game, player, score2, false, false);
             var leaderboard2 = await client.GetLeaderboard(game);
             var result2 = leaderboard2.Entries.Single(x => x.Name == player);
 
@@ -130,7 +154,7 @@ namespace AndreyGames.Leaderboards.Tests
 
             foreach (var player in players)
             {
-                await client.AddOrUpdateScore(game, player.Name, player.Score, player.IsWinner);
+                await client.AddOrUpdateScore(game, player.Name, player.Score, player.IsWinner, false);
             }
 
             var leaderboard = await client.GetLeaderboard(game, limit: playerCount);
@@ -168,7 +192,7 @@ namespace AndreyGames.Leaderboards.Tests
 
             foreach (var player in players)
             {
-                await client.AddOrUpdateScore(game, player.Name, player.Score, false);
+                await client.AddOrUpdateScore(game, player.Name, player.Score, false, false);
             }
 
             var leaderboard = await client.GetLeaderboard(game, winnersOnly: true, limit: playerCount);
@@ -206,7 +230,7 @@ namespace AndreyGames.Leaderboards.Tests
 
             foreach (var player in winners.Union(nonWinners))
             {
-                await client.AddOrUpdateScore(game, player.Name, player.Score, player.IsWinner);
+                await client.AddOrUpdateScore(game, player.Name, player.Score, player.IsWinner, false);
             }
 
             var leaderboard = await client.GetLeaderboard(game, limit: total);

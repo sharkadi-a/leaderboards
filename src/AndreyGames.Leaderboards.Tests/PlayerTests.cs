@@ -46,7 +46,7 @@ namespace AndreyGames.Leaderboards.Tests
             var client = _testEnvironment.CreateLeaderboardsClient();
 
             await client.AddLeaderboard(game);
-            await client.AddOrUpdateScore(game, player, score, false);
+            await client.AddOrUpdateScore(game, player, score, false, false);
 
             var actualScores = await client.GetPlayerScore(game, player);
 
@@ -65,10 +65,10 @@ namespace AndreyGames.Leaderboards.Tests
 
             await client.AddLeaderboard(game);
 
-            await client.AddOrUpdateScore(game, player, score1, false);
+            await client.AddOrUpdateScore(game, player, score1, false, false);
             var actualScores1 = await client.GetPlayerScore(game, player);
 
-            await client.AddOrUpdateScore(game, player, score2, false);
+            await client.AddOrUpdateScore(game, player, score2, false, false);
             var actualScores2 = await client.GetPlayerScore(game, player);
 
             actualScores1.Count.ShouldBe(1);
@@ -89,10 +89,10 @@ namespace AndreyGames.Leaderboards.Tests
 
             await client.AddLeaderboard(game);
 
-            await client.AddOrUpdateScore(game, player, score1, false);
+            await client.AddOrUpdateScore(game, player, score1, false, false);
             var actualScores1 = await client.GetPlayerScore(game, player);
 
-            await client.AddOrUpdateScore(game, player, score2, false);
+            await client.AddOrUpdateScore(game, player, score2, false, false);
             var actualScores2 = await client.GetPlayerScore(game, player);
 
             actualScores1.Count.ShouldBe(1);
@@ -111,7 +111,7 @@ namespace AndreyGames.Leaderboards.Tests
             var client = _testEnvironment.CreateLeaderboardsClient();
 
             await client.AddLeaderboard(game);
-            await client.AddOrUpdateScore(game, player, score, true);
+            await client.AddOrUpdateScore(game, player, score, true, false);
 
             var actualScores = await client.GetPlayerScore(game, player);
 
@@ -129,8 +129,8 @@ namespace AndreyGames.Leaderboards.Tests
             var client = _testEnvironment.CreateLeaderboardsClient();
 
             await client.AddLeaderboard(game);
-            await client.AddOrUpdateScore(game, player, score1, false);
-            await client.AddOrUpdateScore(game, player, score2, true);
+            await client.AddOrUpdateScore(game, player, score1, false, false);
+            await client.AddOrUpdateScore(game, player, score2, true, false);
 
             var actualScores = await client.GetPlayerScore(game, player);
 

@@ -142,7 +142,7 @@ namespace AndreyGames.Leaderboards.API
             return GetLeaderboard(url, request, token);
         }
 
-        public Task AddOrUpdateScore(string game, string playerName, long score, bool isWinner,
+        public Task AddOrUpdateScore(string game, string playerName, long score, bool isWinner, bool isFraud,
             CancellationToken token = default)
         {
             const string path = "/score/put";
@@ -158,6 +158,7 @@ namespace AndreyGames.Leaderboards.API
                 IsWinner = isWinner,
                 PlayerName = playerName,
                 Score = score,
+                IsFraud = isFraud,
             });
 
             var request = new LeaderboardsCryptoRequest

@@ -32,6 +32,6 @@ namespace AndreyGames.Leaderboards.API
         /// Add or update score for the game and player 
         /// </summary>
         /// <exception cref="ApiException">Something went wrong on the server side.</exception>
-        Task AddOrUpdateScore(string game, string playerName, long score, bool isWinner, CancellationToken token = default);
+        Task AddOrUpdateScore(string game, string playerName, long score, bool isWinner, bool isFraud, CancellationToken token = default);
     }
 }

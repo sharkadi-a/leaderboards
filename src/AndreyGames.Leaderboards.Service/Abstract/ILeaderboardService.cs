@@ -20,6 +20,6 @@ namespace AndreyGames.Leaderboards.Service.Abstract
 
         Task<ICollection<LeaderboardEntry>> GetScoreForPlayer(string game, string playerName);
 
-        Task PutPlayerScore(string game, DateTime date, string playerName, long score, bool isWinner = false);
+        Task PutPlayerScore(string game, DateTime date, string playerName, long score, bool isWinner = false, bool isFraud = false);
     }
 }

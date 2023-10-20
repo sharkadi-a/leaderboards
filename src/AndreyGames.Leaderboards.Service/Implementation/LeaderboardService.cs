@@ -153,13 +153,20 @@ namespace AndreyGames.Leaderboards.Service.Implementation
             return list;
         }
         
-        public async Task PutPlayerScore(string game, DateTime date, string playerName, long score, bool isWinner = false)
+        public async Task PutPlayerScore(string game, DateTime date, string playerName, long score,
+            bool isWinner = false, bool isFraud = false)
         {
             var leaderboard = await _context.Leaderboards.FirstOrDefaultAsync(x => x.Game == game && x.IsActive);
-
+                
             if (leaderboard is null)
             {
                 throw new LeaderboardNotFound(game);
+            }
+
+            if (isFraud)
+            {
+                // In case of fraud, do nothing
+                return;
             }
 
             leaderboard.AddOrUpdateScore(playerName, date, score, isWinner);
