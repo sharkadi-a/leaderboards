@@ -77,6 +77,11 @@ namespace AndreyGames.Leaderboards.Tests
                 return Post<LeaderboardsCryptoRequest, ICollection<LeaderboardEntry>>(fullUrl, request, token);
             }
 
+            protected override Task<LeaderboardEntry> GetPlayerRank(string fullUrl, LeaderboardsCryptoRequest request, CancellationToken token = default)
+            {
+                return Post<LeaderboardsCryptoRequest, LeaderboardEntry>(fullUrl, request, token);
+            }
+
             protected override Task<LeaderboardView> GetLeaderboard(string fullUrl, LeaderboardsCryptoRequest request, CancellationToken token = default)
             {
                 return Post<LeaderboardsCryptoRequest, LeaderboardView>(fullUrl, request, token);
@@ -121,6 +126,13 @@ namespace AndreyGames.Leaderboards.Tests
                 CancellationToken token = default)
             {
                 return _leaderboardsClientImplementation.GetPlayerScore(game, playerName, token);
+            }
+
+            public Task<LeaderboardEntry> GetPlayerRank(string game, string playerName, bool winnersOnly = false, TimeFrame? timeFrame = default,
+                CancellationToken token = default)
+            {
+                return _leaderboardsClientImplementation.GetPlayerRank(game, playerName, winnersOnly, timeFrame,
+                    token);
             }
 
             public Task<LeaderboardView> GetLeaderboard(string game, bool winnersOnly = false,

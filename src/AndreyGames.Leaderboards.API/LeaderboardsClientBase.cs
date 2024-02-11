@@ -35,6 +35,10 @@ namespace AndreyGames.Leaderboards.API
             LeaderboardsCryptoRequest request,
             CancellationToken token = default);
 
+        protected abstract Task<LeaderboardEntry> GetPlayerRank(string fullUrl,
+            LeaderboardsCryptoRequest request,
+            CancellationToken token = default);
+
         protected abstract Task<LeaderboardView> GetLeaderboard(string fullUrl,
             LeaderboardsCryptoRequest request,
             CancellationToken token = default);
@@ -107,6 +111,37 @@ namespace AndreyGames.Leaderboards.API
             };
 
             return GetPlayerScore(url, request, token);
+        }
+
+        public Task<LeaderboardEntry> GetPlayerRank(string game, 
+            string playerName, 
+            bool winnersOnly = false, 
+            TimeFrame? timeFrame = default,
+            CancellationToken token = default)
+        {
+            const string path = "/score/rank";
+            var url = CreateUrl(path);
+
+            LogFormat(
+                "Executing GetPlayerOffset command on URL '{0}', game=[{1}], winnersOnly=[{2}], timeFrame=[{3}]",
+                url, game, winnersOnly, timeFrame);
+
+            var json = SerializeJsonBytes(new GetPlayerRank
+            {
+                Game = game,
+                PlayerName = playerName,
+                WinnersOnly = winnersOnly,
+                Time = timeFrame,
+            });
+
+            var request = new LeaderboardsCryptoRequest
+            {
+                Body = _cryptoService.EncryptAsBase64(json,
+                    _password,
+                    _seed),
+            };
+
+            return GetPlayerRank(url, request, token);        
         }
 
         public Task<LeaderboardView> GetLeaderboard(string game, 

@@ -76,5 +76,20 @@ namespace AndreyGames.Leaderboards.Service.Controllers
             
             return new LeaderboardApiResponse();
         }
+
+        [HttpPost("score/rank")]
+        public async Task<LeaderboardApiResponse> GetPlayerRank([FromBody] GetPlayerRank request)
+        {
+            var startDate = _timeFrameConverter.GetStartDate(request.Time ?? TimeFrame.Infinite);
+            var endDate = _timeFrameConverter.GetEndDate(request.Time ?? TimeFrame.Infinite);
+
+            var data = await _leaderboardService.GetPlayerRank(request.Game,
+                request.PlayerName,
+                startDate,
+                endDate,
+                request.WinnersOnly);
+
+            return new LeaderboardApiResponse(data);
+        }
     }
 }
