@@ -101,6 +101,60 @@ namespace AndreyGames.Leaderboards.Service.Implementation
             };
         }
 
+        public async Task<LeaderboardEntry> GetPlayerRank(string game, string playerName, DateTime? start = default, DateTime? end = default,
+            bool onlyWinners = false)
+        {
+            if (start.HasValue && end.HasValue)
+            {
+                if (start.Value > end.Value)
+                {
+                    throw new InvalidTimeframeException();
+                }
+            }
+            
+            var leaderboard = await _context
+                .Leaderboards
+                .FirstOrDefaultAsync(x => x.Game == game && x.IsActive);
+
+            if (leaderboard is null)
+            {
+                throw new LeaderboardNotFound(game);
+            }
+
+            var wherePlaceholder = BasicQueryBuilder<ScoreItem>.WherePlaceholder;
+            
+            var queryTemplate =
+                $@"WITH entries as (SELECT ""Entries"".*, row_number() OVER (ORDER BY ""Score"" DESC, ""Timestamp"" DESC) as ""RowNumber"" 
+                    FROM ""Entries"" WHERE ""LeaderboardId"" = @LeaderBoardId AND ({wherePlaceholder}))
+                    SELECT ""RowNumber"" as ""Rank"", ""Score"", ""IsWinner"" FROM entries WHERE ""PlayerName"" = @PlayerName";
+
+            var queryBuilder = BasicQueryBuilder<ScoreItem>
+                .New(_context)
+                .WithQueryTemplate(queryTemplate)
+                .WithArbitraryParameter("LeaderBoardId", leaderboard.Id)
+                .WithArbitraryParameter("PlayerName", playerName);
+
+            if (onlyWinners)
+            {
+                queryBuilder = queryBuilder.And("IsWinner", true);
+            }
+            
+            if (start.HasValue && end.HasValue)
+            {
+                queryBuilder = queryBuilder.AndBetween("Timestamp", start.Value, end.Value);
+            }
+
+            var results = await queryBuilder.Execute();
+
+            return results.Select(x => new LeaderboardEntry
+            {
+                IsWinner = x.IsWinner, 
+                Rank = x.Rank,
+                Score = x.Score,
+                Name = playerName,
+            }).FirstOrDefault();
+        }
+
         private class ScoreItem
         {
             public long Score { get; set; }

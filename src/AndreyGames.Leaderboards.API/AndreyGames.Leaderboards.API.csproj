@@ -5,7 +5,7 @@
         <LangVersion>latest</LangVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Title>AndreyGames.Leaderboards.API</Title>
-        <Copyright>Sharkadi Andrey (andrey.games) (c) 2023</Copyright>
+        <Copyright>Sharkadi Andrey (andrey.games) (c) 2023-2024</Copyright>
         <PackageProjectUrl>https://github.com/sharkadi-a/leaderboards</PackageProjectUrl>
         <RepositoryUrl>https://github.com/sharkadi-a/leaderboards</RepositoryUrl>
         <RepositoryType>GIT</RepositoryType>
@@ -16,9 +16,9 @@
         <PackageReleaseNotes>Fixing metadata for ProGet</PackageReleaseNotes>
         <PackageTags>andrey.games leaderboards api</PackageTags>
 
-        <Version>1.8.0</Version>
-        <PackageVersion>1.8.0</PackageVersion>
-        <AssemblyVersion>1.8.0</AssemblyVersion>
+        <Version>1.9.0</Version>
+        <PackageVersion>1.9.0</PackageVersion>
+        <AssemblyVersion>1.9.0</AssemblyVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

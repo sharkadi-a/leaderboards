@@ -23,6 +23,13 @@ namespace AndreyGames.Leaderboards.API
         Task<ICollection<LeaderboardEntry>> GetPlayerScore(string game, string playerName, CancellationToken token = default);
 
         /// <summary>
+        /// Returns player's rank position in the specified leaderboard.
+        /// </summary>
+        /// <exception cref="ApiException">Something went wrong on the server side.</exception>
+        Task<LeaderboardEntry> GetPlayerRank(string game, string playerName, bool winnersOnly = false,
+            TimeFrame? timeFrame = default, CancellationToken token = default);
+
+        /// <summary>
         /// Get leaderboard for the game
         /// </summary>
         /// <exception cref="ApiException">Something went wrong on the server side.</exception>
