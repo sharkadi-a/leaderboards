@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -37,6 +38,11 @@ namespace AndreyGames.Leaderboards.Tests
 
         public Stream Build()
         {
+            if (string.IsNullOrWhiteSpace(_connectionString))
+            {
+                throw new ArgumentException("Connection string is empty, test require connection string to DB.");
+            }
+            
             var obj = new
             {
                 Auth = _users.Select(x => new

@@ -23,10 +23,13 @@ namespace AndreyGames.Leaderboards.Service.Middleware
             try
             {
                 await _next(context);
-            }
-            catch (BusinessLogicException)
-            {
                 
+                _logger.LogInformation(
+                    "{method} {fullUrl} {url} => {statusCode}",
+                    context.Request?.Method,
+                    context.Request?.GetDisplayUrl(),
+                    context.Request?.Path.Value,
+                    context.Response?.StatusCode);
             }
             catch (Exception ex)
             {
@@ -36,17 +39,8 @@ namespace AndreyGames.Leaderboards.Service.Middleware
                     context.Request?.GetDisplayUrl(),
                     context.Request?.Path.Value,
                     context.Response?.StatusCode,
-                    ex.Message);
-                
-                return;
+                    ex);
             }
-            
-            _logger.LogInformation(
-                "{method} {fullUrl} {url} => {statusCode}",
-                context.Request?.Method,
-                context.Request?.GetDisplayUrl(),
-                context.Request?.Path.Value,
-                context.Response?.StatusCode);
         }
     }
 }
