@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using AndreyGames.Leaderboards.API;
 using Bogus;
 using Shouldly;
 using Xunit;
@@ -169,6 +170,40 @@ namespace AndreyGames.Leaderboards.Tests
             var randomPlayer = players.ElementAt(_faker.Random.Int(0, players.Count));
             var playerRank = await client.GetPlayerRank(game, randomPlayer.Key, randomPlayer.Value.IsWinner);
             var wholeLeaderboard = await client.GetLeaderboard(game, winnersOnly: randomPlayer.Value.IsWinner, limit: players.Count);
+            
+            playerRank.Rank.ShouldBeGreaterThan(0);
+            playerRank.Rank.ShouldBe(wholeLeaderboard.Entries.Single(x => x.Name == randomPlayer.Key).Rank);
+        }        
+        
+        [Fact]
+        public async void AddScores_ThenGetPlayerRankInTimeFrame_ShouldBeSameAsInLeaderboard()
+        {
+            var game = CreateGameName();
+
+            var players = Enumerable
+                .Range(0, _faker.Random.Int(10, 100))
+                .Select(_ => new Faker())
+                .Select(faker => $"{faker.Person.FullName} {faker.Person.DateOfBirth}")
+                .ToDictionary(x => x,
+                    _ => new
+                    {
+                        Score = _faker.Random.Int(0, 1000000),
+                        IsWinner = _faker.Random.Bool()
+                    });
+            
+            var client = _testEnvironment.CreateLeaderboardsClient();
+            var clock = _testEnvironment.Clock;
+
+            await client.AddLeaderboard(game);
+            foreach (var player in players)
+            {
+                await client.AddOrUpdateScore(game, player.Key, player.Value.Score, player.Value.IsWinner, false);
+                clock.CurrentTime = clock.CurrentTime.AddMinutes(1);
+            }
+
+            var randomPlayer = players.ElementAt(_faker.Random.Int(0, players.Count));
+            var playerRank = await client.GetPlayerRank(game, randomPlayer.Key, randomPlayer.Value.IsWinner, TimeFrame.Week);
+            var wholeLeaderboard = await client.GetLeaderboard(game, winnersOnly: randomPlayer.Value.IsWinner, limit: players.Count, timeFrame: TimeFrame.Week);
             
             playerRank.Rank.ShouldBeGreaterThan(0);
             playerRank.Rank.ShouldBe(wholeLeaderboard.Entries.Single(x => x.Name == randomPlayer.Key).Rank);

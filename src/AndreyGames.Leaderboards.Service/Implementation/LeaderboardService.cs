@@ -125,13 +125,13 @@ namespace AndreyGames.Leaderboards.Service.Implementation
             
             var queryTemplate =
                 $@"WITH entries as (SELECT ""Entries"".*, row_number() OVER (ORDER BY ""Score"" DESC, ""Timestamp"" DESC) as ""RowNumber"" 
-                    FROM ""Entries"" WHERE ""LeaderboardId"" = @LeaderBoardId AND ({wherePlaceholder}))
+                    FROM ""Entries"" WHERE ""LeaderboardId"" = @LeaderboardId AND ({wherePlaceholder}))
                     SELECT ""RowNumber"" as ""Rank"", ""Score"", ""IsWinner"" FROM entries WHERE ""PlayerName"" = @PlayerName";
 
             var queryBuilder = BasicQueryBuilder<ScoreItem>
                 .New(_context)
                 .WithQueryTemplate(queryTemplate)
-                .WithArbitraryParameter("LeaderBoardId", leaderboard.Id)
+                .WithArbitraryParameter("LeaderboardId", leaderboard.Id)
                 .WithArbitraryParameter("PlayerName", playerName);
 
             if (onlyWinners)

@@ -53,7 +53,7 @@ namespace AndreyGames.Leaderboards.Tests
 
                 var obj = JObject.Parse(await httpResponseMessage.Content.ReadAsStringAsync());
                 var dict = obj["data"].ToDictionary(x => x.First.Value<string>(), x => x.Last.Value<string>());
-                throw new ApiException(obj["message"].Value<string>(), dict);
+                throw new ApiException(fullUrl, obj["message"].Value<string>(), dict);
             }
 
             async protected Task Post<TRequest>(string fullUrl, TRequest request, CancellationToken token)
@@ -64,7 +64,7 @@ namespace AndreyGames.Leaderboards.Tests
 
                 var obj = JObject.Parse(await httpResponseMessage.Content.ReadAsStringAsync());
                 var dict = obj["data"].ToDictionary(x => x.First.Value<string>(), x => x.Last.Value<string>());
-                throw new ApiException(obj["message"].Value<string>(), dict);
+                throw new ApiException(fullUrl, obj["message"].Value<string>(), dict);
             }
 
             protected override Task AddLeaderboard(string fullUrl, LeaderboardsCryptoRequest request, CancellationToken token = default)
@@ -166,7 +166,9 @@ namespace AndreyGames.Leaderboards.Tests
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            var connectionString = Environment.GetEnvironmentVariable("TEST_DB_CONNECTION_STRING");
+            var connectionString = Environment.GetEnvironmentVariable("TEST_DB_CONNECTION_STRING")
+                ?? throw new InvalidOperationException("TEST_DB_CONNECTION_STRING environment variable must be set");
+            
             const string vector = "Test";
 
             var config = new TestConfigFileBuilder()

@@ -10,6 +10,11 @@ namespace AndreyGames.Leaderboards.API
     public sealed class ApiException : Exception
     {
         /// <summary>
+        /// Original request URL where this exception happened
+        /// </summary>
+        public string Url { get; }
+        
+        /// <summary>
         /// Message
         /// </summary>
         public override string Message { get; }
@@ -31,8 +36,9 @@ namespace AndreyGames.Leaderboards.API
             ? DateTime.ParseExact(Data[nameof(Timestamp)].ToString(), "O", CultureInfo.InvariantCulture)
             : null;
 
-        public ApiException(string message, IDictionary data)
+        public ApiException(string url, string message, IDictionary data)
         {
+            Url = url;
             Message = message;
             Data = data;
         }
