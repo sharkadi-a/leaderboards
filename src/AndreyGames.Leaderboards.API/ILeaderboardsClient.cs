@@ -15,19 +15,26 @@ namespace AndreyGames.Leaderboards.API
         /// </summary>
         /// <exception cref="ApiException">Something went wrong on the server side.</exception>
         Task AddLeaderboard(string game, CancellationToken token = default);
-        
+
         /// <summary>
         /// Get player's score for the game
         /// </summary>
         /// <exception cref="ApiException">Something went wrong on the server side.</exception>
-        Task<ICollection<LeaderboardEntry>> GetPlayerScore(string game, string playerName, CancellationToken token = default);
+        Task<ICollection<LeaderboardEntry>> GetPlayerScore(string game, 
+            string playerName, 
+            bool caseInsensitive = false,
+            CancellationToken token = default);
 
         /// <summary>
         /// Returns player's rank position in the specified leaderboard.
         /// </summary>
         /// <exception cref="ApiException">Something went wrong on the server side.</exception>
-        Task<LeaderboardEntry> GetPlayerRank(string game, string playerName, bool winnersOnly = false,
-            TimeFrame? timeFrame = default, CancellationToken token = default);
+        Task<LeaderboardEntry> GetPlayerRank(string game, 
+            string playerName, 
+            bool caseInsensitive = false,
+            bool winnersOnly = false,
+            TimeFrame? timeFrame = default, 
+            CancellationToken token = default);
 
         /// <summary>
         /// Get leaderboard for the game

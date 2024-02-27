@@ -14,5 +14,10 @@
         /// Player name to return the score for
         /// </summary>
         public string PlayerName { get; set; }
+        
+        /// <summary>
+        /// If true, player will be searched in a case-insensitive way
+        /// </summary>
+        public bool CaseInsensitive { get; set; }
     }
 }

@@ -15,6 +15,7 @@ namespace AndreyGames.Leaderboards.Service.Implementation
         private readonly List<(string Field, object Value1, object Value2)> _andBetweens = new();
 
         private string _template;
+        private string _envelope;
         
         public static string WherePlaceholder => "%%WHERE%%";
         
@@ -34,6 +35,12 @@ namespace AndreyGames.Leaderboards.Service.Implementation
         public BasicQueryBuilder<TModel> WithArbitraryParameter(string name, object value)
         {
             _arbitraryParams[name] = value;
+            return this;
+        }
+
+        public BasicQueryBuilder<TModel> WithEnvelope(string formattedEnvelope)
+        {
+            _envelope = formattedEnvelope;
             return this;
         }
         
@@ -80,6 +87,12 @@ namespace AndreyGames.Leaderboards.Service.Implementation
             }
 
             var where = string.Join(" AND ", all);
+
+            if (!string.IsNullOrEmpty(_envelope) && !string.IsNullOrWhiteSpace(where))
+            {
+                where = string.Format(_envelope, where);
+            }
+            
             return _template.Replace(WherePlaceholder, where);
         }
 

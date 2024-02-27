@@ -101,7 +101,7 @@ namespace AndreyGames.Leaderboards.Service.Implementation
             };
         }
 
-        public async Task<LeaderboardEntry> GetPlayerRank(string game, string playerName, DateTime? start = default, DateTime? end = default,
+        public async Task<LeaderboardEntry> GetPlayerRank(string game, string playerName, bool caseInsensitive, DateTime? start = default, DateTime? end = default,
             bool onlyWinners = false)
         {
             if (start.HasValue && end.HasValue)
@@ -123,14 +123,20 @@ namespace AndreyGames.Leaderboards.Service.Implementation
 
             var wherePlaceholder = BasicQueryBuilder<ScoreItem>.WherePlaceholder;
             
-            var queryTemplate =
+            var queryTemplateCaseSensitive =
                 $@"WITH entries as (SELECT ""Entries"".*, row_number() OVER (ORDER BY ""Score"" DESC, ""Timestamp"" DESC) as ""RowNumber"" 
-                    FROM ""Entries"" WHERE ""LeaderboardId"" = @LeaderboardId AND ({wherePlaceholder}))
+                    FROM ""Entries"" WHERE ""LeaderboardId"" = @LeaderboardId {wherePlaceholder})
                     SELECT ""RowNumber"" as ""Rank"", ""Score"", ""IsWinner"" FROM entries WHERE ""PlayerName"" = @PlayerName";
 
+            var queryTemplateCaseInsensitive =
+                $@"WITH entries as (SELECT ""Entries"".*, row_number() OVER (ORDER BY ""Score"" DESC, ""Timestamp"" DESC) as ""RowNumber"" 
+                    FROM ""Entries"" WHERE ""LeaderboardId"" = @LeaderboardId {wherePlaceholder})
+                    SELECT ""RowNumber"" as ""Rank"", ""Score"", ""IsWinner"" FROM entries WHERE LOWER(""PlayerName"") = LOWER(@PlayerName)";
+            
             var queryBuilder = BasicQueryBuilder<ScoreItem>
                 .New(_context)
-                .WithQueryTemplate(queryTemplate)
+                .WithQueryTemplate(caseInsensitive ? queryTemplateCaseInsensitive : queryTemplateCaseSensitive)
+                .WithEnvelope("AND ({0})")
                 .WithArbitraryParameter("LeaderboardId", leaderboard.Id)
                 .WithArbitraryParameter("PlayerName", playerName);
 
@@ -148,10 +154,16 @@ namespace AndreyGames.Leaderboards.Service.Implementation
 
             return results.Select(x => new LeaderboardEntry
             {
-                IsWinner = x.IsWinner, 
+                IsWinner = x.IsWinner,
                 Rank = x.Rank,
                 Score = x.Score,
                 Name = playerName,
+            }).DefaultIfEmpty(new LeaderboardEntry
+            {
+                IsWinner = false,
+                Name = playerName,
+                Rank = 0,
+                Score = 0,
             }).FirstOrDefault();
         }
 
@@ -162,7 +174,7 @@ namespace AndreyGames.Leaderboards.Service.Implementation
             public bool IsWinner { get; set; }
         }
         
-        public async Task<ICollection<LeaderboardEntry>> GetScoreForPlayer(string game, string playerName)
+        public async Task<ICollection<LeaderboardEntry>> GetScoreForPlayer(string game, string playerName, bool caseInsensitive)
         {
             var leaderboard = await _context
                 .Leaderboards
@@ -173,19 +185,29 @@ namespace AndreyGames.Leaderboards.Service.Implementation
                 throw new LeaderboardNotFound(game);
             }
 
-            var entry = leaderboard.Entries.FirstOrDefault(x => x.PlayerName == playerName);
+            var entry = caseInsensitive
+                ? leaderboard.Entries.FirstOrDefault(x => x.PlayerName.ToLower() == playerName.ToLower())
+                : leaderboard.Entries.FirstOrDefault(x => x.PlayerName == playerName);
 
             if (entry is null)
             {
                 return ArraySegment<LeaderboardEntry>.Empty;
             }
 
+            const string caseSensitiveQuery =
+                @"WITH entries as (SELECT ""Entries"".*, row_number() OVER (ORDER BY ""Score"" DESC, ""Timestamp"" DESC) as ""RowNumber""
+                                        FROM ""Entries"" WHERE ""LeaderboardId"" = @id)
+                                        SELECT ""RowNumber"" as ""Rank"", ""Score"", ""IsWinner"" FROM entries WHERE ""PlayerName"" = @name";
+            
+            const string caseInsensitiveQuery = 
+                @"WITH entries as (SELECT ""Entries"".*, row_number() OVER (ORDER BY ""Score"" DESC, ""Timestamp"" DESC) as ""RowNumber""
+                                        FROM ""Entries"" WHERE ""LeaderboardId"" = @id)
+                                        SELECT ""RowNumber"" as ""Rank"", ""Score"", ""IsWinner"" FROM entries WHERE LOWER(""PlayerName"") = LOWER(@name)";
+
             var scores = await _context.Database
                 .GetDbConnection()
                 .QueryAsync<ScoreItem>(
-                    @"WITH entries as (SELECT ""Entries"".*, row_number() OVER (ORDER BY ""Score"" DESC, ""Timestamp"" DESC) as ""RowNumber""
-                                        FROM ""Entries"" WHERE ""LeaderboardId"" = @id)
-                                        SELECT ""RowNumber"" as ""Rank"", ""Score"", ""IsWinner"" FROM entries WHERE ""PlayerName"" = @name", 
+                    caseInsensitive ? caseInsensitiveQuery : caseSensitiveQuery,
                     new
                     {
                         id = leaderboard.Id,

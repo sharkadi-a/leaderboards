@@ -60,7 +60,7 @@ namespace AndreyGames.Leaderboards.Service.Controllers
         public async Task<LeaderboardApiResponse> GetPlayerScore([FromBody] GetPlayerScoreRequest request)
         {
             return new LeaderboardApiResponse(
-                await _leaderboardService.GetScoreForPlayer(request.Game, request.PlayerName));
+                await _leaderboardService.GetScoreForPlayer(request.Game, request.PlayerName, request.CaseInsensitive));
         }
 
         [HttpPost("score/put")]
@@ -78,13 +78,14 @@ namespace AndreyGames.Leaderboards.Service.Controllers
         }
 
         [HttpPost("score/rank")]
-        public async Task<LeaderboardApiResponse> GetPlayerRank([FromBody] GetPlayerRank request)
+        public async Task<LeaderboardApiResponse> GetPlayerRank([FromBody] GetPlayerRankRequest request)
         {
             var startDate = _timeFrameConverter.GetStartDate(request.Time ?? TimeFrame.Infinite);
             var endDate = _timeFrameConverter.GetEndDate(request.Time ?? TimeFrame.Infinite);
 
             var data = await _leaderboardService.GetPlayerRank(request.Game,
                 request.PlayerName,
+                request.CaseInsensitive,
                 startDate,
                 endDate,
                 request.WinnersOnly);
