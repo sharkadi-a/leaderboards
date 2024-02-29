@@ -205,7 +205,7 @@ namespace AndreyGames.Leaderboards.Tests
             }
 
             var randomPlayer = players.ElementAt(_faker.Random.Int(0, players.Count));
-            var playerRank = await client.GetPlayerRank(game, randomPlayer.Key, randomPlayer.Value.IsWinner);
+            var playerRank = await client.GetPlayerRank(game, randomPlayer.Key, winnersOnly: randomPlayer.Value.IsWinner);
             var wholeLeaderboard = await client.GetLeaderboard(game, winnersOnly: randomPlayer.Value.IsWinner, limit: players.Count);
             
             playerRank.Rank.ShouldBeGreaterThan(0);
@@ -338,7 +338,7 @@ namespace AndreyGames.Leaderboards.Tests
                 clock.CurrentTime = clock.CurrentTime.AddMinutes(1);
             }
 
-            var randomPlayer = players.ElementAt(_faker.Random.Int(0, players.Count));
+            var randomPlayer = players.ElementAt(_faker.Random.Int(0, players.Count - 1));
             var playerRank = await client.GetPlayerRank(game, RandomizeLetters(randomPlayer.Key), caseInsensitive: true, winnersOnly: randomPlayer.Value.IsWinner, timeFrame: TimeFrame.Week);
             var wholeLeaderboard = await client.GetLeaderboard(game, winnersOnly: randomPlayer.Value.IsWinner, limit: players.Count, timeFrame: TimeFrame.Week);
             
