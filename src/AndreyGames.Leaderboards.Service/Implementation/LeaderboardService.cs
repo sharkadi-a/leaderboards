@@ -64,40 +64,38 @@ namespace AndreyGames.Leaderboards.Service.Implementation
             var offsetValue = Math.Max(0, offset ?? 0);
             var limitValue = Math.Max(1, limit ?? 20);
 
-            IEnumerable<Entry> entries = leaderboard.Entries;
+            var wherePlaceholder = BasicQueryBuilder<LeaderboardEntry>.WherePlaceholder;
+            var pagingPlaceholder = BasicQueryBuilder<LeaderboardEntry>.PagingPlaceholder;
             
-            if (start.HasValue)
-            {
-                entries = entries.Where(x => x.Timestamp >= start.Value);
-            }
+            var queryTemplate =
+                $@"WITH entries as (SELECT ""Entries"".*, row_number() OVER (ORDER BY ""Score"" DESC, ""Timestamp"" DESC) as ""RowNumber"" 
+                    FROM ""Entries"" WHERE ""LeaderboardId"" = @LeaderboardId {wherePlaceholder})
+                    SELECT ""RowNumber"" as ""Rank"", ""Score"", ""IsWinner"", ""PlayerName"" as ""Name"" FROM entries {pagingPlaceholder}";
 
-            if (end.HasValue)
-            {
-                entries = entries.Where(x => x.Timestamp < end.Value);
-            }
-            
+            var queryBuilder = BasicQueryBuilder<LeaderboardEntry>
+                .New(_context)
+                .WithQueryTemplate(queryTemplate)
+                .WithEnvelope("AND ({0})")
+                .WithArbitraryParameter("LeaderboardId", leaderboard.Id)
+                .WithPaging(limitValue, offsetValue);
+
             if (onlyWinners)
             {
-                entries = entries.Where(x => x.IsWinner);
+                queryBuilder = queryBuilder.And("IsWinner", true);
+            }
+            
+            if (start.HasValue && end.HasValue)
+            {
+                queryBuilder = queryBuilder.AndBetween("Timestamp", start.Value, end.Value);
             }
 
-            entries = entries.OrderByDescending(x => x.Score)
-                .ThenByDescending(x => x.Timestamp)
-                .Skip(offsetValue)
-                .Take(limitValue);
-            
-            var counter = offsetValue;
+            var results = await queryBuilder.Execute();
+            var entries = results.ToArray();
             
             return new LeaderboardView
             {
-                Offset = offsetValue,
-                Entries = entries.Select(x => new LeaderboardEntry
-                {
-                    Name = x.PlayerName,
-                    Score = x.Score,
-                    Rank = ++counter,
-                    IsWinner = x.IsWinner,
-                }).ToArray(),
+                Offset = entries.LastOrDefault()?.Rank ?? 0, 
+                Entries = entries,
             };
         }
 
