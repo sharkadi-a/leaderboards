@@ -3,7 +3,7 @@
     /// <summary>
     /// Get player's offset in the leaderboard
     /// </summary>
-    public class GetPlayerRank : LeaderboardsCryptoRequest
+    public class GetPlayerRankRequest : LeaderboardsCryptoRequest
     {
         /// <summary>
         /// The game
@@ -14,6 +14,11 @@
         /// The name of the player.
         /// </summary>
         public string PlayerName { get; set; }
+        
+        /// <summary>
+        /// If true, player will be searched in a case-insensitive way
+        /// </summary>
+        public bool CaseInsensitive { get; set; }
 
         /// <summary>
         /// Return only winners

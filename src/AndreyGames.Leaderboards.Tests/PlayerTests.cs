@@ -20,6 +20,9 @@ namespace AndreyGames.Leaderboards.Tests
 
         private string CreateGameName() => $"{_faker.Company.CompanyName()} {_faker.Commerce.Ean13()}";
 
+        private string RandomizeLetters(string input) =>
+            new(input.Select(x => _faker.Random.Bool() ? char.ToUpper(x) : char.ToLower(x)).ToArray());
+        
         [Fact]
         public async void CreateLeaderboard_ShouldSucceed()
         {
@@ -54,6 +57,40 @@ namespace AndreyGames.Leaderboards.Tests
 
             actualScores.Count.ShouldBe(1);
             actualScores.Single().Score.ShouldBe(score);
+        }        
+        
+        [Fact]
+        public async void AddScore_ThenGetScoreCaseInsensitive_ShouldBeEqual()
+        {
+            var game = CreateGameName();
+            var player = _faker.Person.FullName;
+            var score = (int)_faker.Finance.Amount(100, 10000, 0);
+            var client = _testEnvironment.CreateLeaderboardsClient();
+
+            await client.AddLeaderboard(game);
+            await client.AddOrUpdateScore(game, player, score, false, false);
+
+            var actualScores = await client.GetPlayerScore(game, RandomizeLetters(player), true);
+
+            actualScores.Count.ShouldBe(1);
+            actualScores.Single().Score.ShouldBe(score);
+            actualScores.Single().Name = player;
+        }
+        
+        [Fact]
+        public async void AddScore_WhenPlayerNameHasWrongCase_ThenGetScore_ShouldNotBeEqual()
+        {
+            var game = CreateGameName();
+            var player = _faker.Person.FullName;
+            var score = (int)_faker.Finance.Amount(100, 10000, 0);
+            var client = _testEnvironment.CreateLeaderboardsClient();
+
+            await client.AddLeaderboard(game);
+            await client.AddOrUpdateScore(game, player, score, false, false);
+
+            var actualScores = await client.GetPlayerScore(game, RandomizeLetters(player), false);
+
+            actualScores.Count.ShouldBe(0);
         }
 
         [Fact]
@@ -168,12 +205,78 @@ namespace AndreyGames.Leaderboards.Tests
             }
 
             var randomPlayer = players.ElementAt(_faker.Random.Int(0, players.Count));
-            var playerRank = await client.GetPlayerRank(game, randomPlayer.Key, randomPlayer.Value.IsWinner);
+            var playerRank = await client.GetPlayerRank(game, randomPlayer.Key, winnersOnly: randomPlayer.Value.IsWinner);
+            var wholeLeaderboard = await client.GetLeaderboard(game, winnersOnly: randomPlayer.Value.IsWinner, limit: players.Count);
+            
+            playerRank.Rank.ShouldBeGreaterThan(0);
+            playerRank.Rank.ShouldBe(wholeLeaderboard.Entries.Single(x => x.Name == randomPlayer.Key).Rank);
+        }  
+        
+        [Fact]
+        public async void AddScores_ThenGetPlayerRankCaseInsensitive_ShouldBeSameAsInLeaderboard()
+        {
+            var game = CreateGameName();
+
+            var players = Enumerable
+                .Range(0, _faker.Random.Int(10, 100))
+                .Select(_ => new Faker())
+                .Select(faker => $"{faker.Person.FullName} {faker.Person.DateOfBirth}")
+                .ToDictionary(x => x,
+                    _ => new
+                    {
+                        Score = _faker.Random.Int(0, 1000000),
+                        IsWinner = _faker.Random.Bool()
+                    });
+            
+            var client = _testEnvironment.CreateLeaderboardsClient();
+            var clock = _testEnvironment.Clock;
+
+            await client.AddLeaderboard(game);
+            foreach (var player in players)
+            {
+                await client.AddOrUpdateScore(game, player.Key, player.Value.Score, player.Value.IsWinner, false);
+                clock.CurrentTime = clock.CurrentTime.AddMinutes(1);
+            }
+
+            var randomPlayer = players.ElementAt(_faker.Random.Int(0, players.Count));
+            var playerRank = await client.GetPlayerRank(game, randomPlayer.Key.ToUpper(), caseInsensitive: true, winnersOnly: randomPlayer.Value.IsWinner);
             var wholeLeaderboard = await client.GetLeaderboard(game, winnersOnly: randomPlayer.Value.IsWinner, limit: players.Count);
             
             playerRank.Rank.ShouldBeGreaterThan(0);
             playerRank.Rank.ShouldBe(wholeLeaderboard.Entries.Single(x => x.Name == randomPlayer.Key).Rank);
         }        
+        
+        [Fact]
+        public async void AddScores_WhenPlayerHasWrongCase_ThenGetPlayerRankInTimeFrame_ShouldNotBeInLeaderboard()
+        {
+            var game = CreateGameName();
+
+            var players = Enumerable
+                .Range(0, _faker.Random.Int(10, 100))
+                .Select(_ => new Faker())
+                .Select(faker => $"{faker.Person.FullName} {faker.Person.DateOfBirth}")
+                .ToDictionary(x => x,
+                    _ => new
+                    {
+                        Score = _faker.Random.Int(0, 1000000),
+                        IsWinner = _faker.Random.Bool()
+                    });
+            
+            var client = _testEnvironment.CreateLeaderboardsClient();
+            var clock = _testEnvironment.Clock;
+
+            await client.AddLeaderboard(game);
+            foreach (var player in players)
+            {
+                await client.AddOrUpdateScore(game, player.Key, player.Value.Score, player.Value.IsWinner, false);
+                clock.CurrentTime = clock.CurrentTime.AddMinutes(1);
+            }
+
+            var randomPlayer = players.ElementAt(_faker.Random.Int(0, players.Count));
+            var playerRank = await client.GetPlayerRank(game, RandomizeLetters(randomPlayer.Key), winnersOnly: randomPlayer.Value.IsWinner, timeFrame: TimeFrame.Week);
+            
+            playerRank.Rank.ShouldBe(0);
+        }  
         
         [Fact]
         public async void AddScores_ThenGetPlayerRankInTimeFrame_ShouldBeSameAsInLeaderboard()
@@ -202,7 +305,41 @@ namespace AndreyGames.Leaderboards.Tests
             }
 
             var randomPlayer = players.ElementAt(_faker.Random.Int(0, players.Count));
-            var playerRank = await client.GetPlayerRank(game, randomPlayer.Key, randomPlayer.Value.IsWinner, TimeFrame.Week);
+            var playerRank = await client.GetPlayerRank(game, randomPlayer.Key, winnersOnly: randomPlayer.Value.IsWinner, timeFrame: TimeFrame.Week);
+            var wholeLeaderboard = await client.GetLeaderboard(game, winnersOnly: randomPlayer.Value.IsWinner, limit: players.Count, timeFrame: TimeFrame.Week);
+            
+            playerRank.Rank.ShouldBeGreaterThan(0);
+            playerRank.Rank.ShouldBe(wholeLeaderboard.Entries.Single(x => x.Name == randomPlayer.Key).Rank);
+        }    
+        
+        [Fact]
+        public async void AddScores_ThenGetPlayerRankInTimeFrameCaseInsensitive_ShouldBeSameAsInLeaderboard()
+        {
+            var game = CreateGameName();
+
+            var players = Enumerable
+                .Range(0, _faker.Random.Int(10, 100))
+                .Select(_ => new Faker())
+                .Select(faker => $"{faker.Person.FullName} {faker.Person.DateOfBirth}")
+                .ToDictionary(x => x,
+                    _ => new
+                    {
+                        Score = _faker.Random.Int(0, 1000000),
+                        IsWinner = _faker.Random.Bool()
+                    });
+            
+            var client = _testEnvironment.CreateLeaderboardsClient();
+            var clock = _testEnvironment.Clock;
+
+            await client.AddLeaderboard(game);
+            foreach (var player in players)
+            {
+                await client.AddOrUpdateScore(game, player.Key, player.Value.Score, player.Value.IsWinner, false);
+                clock.CurrentTime = clock.CurrentTime.AddMinutes(1);
+            }
+
+            var randomPlayer = players.ElementAt(_faker.Random.Int(0, players.Count - 1));
+            var playerRank = await client.GetPlayerRank(game, RandomizeLetters(randomPlayer.Key), caseInsensitive: true, winnersOnly: randomPlayer.Value.IsWinner, timeFrame: TimeFrame.Week);
             var wholeLeaderboard = await client.GetLeaderboard(game, winnersOnly: randomPlayer.Value.IsWinner, limit: players.Count, timeFrame: TimeFrame.Week);
             
             playerRank.Rank.ShouldBeGreaterThan(0);

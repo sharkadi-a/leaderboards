@@ -89,7 +89,9 @@ namespace AndreyGames.Leaderboards.API
             return AddLeaderboard(url, request, token);
         }
 
-        public Task<ICollection<LeaderboardEntry>> GetPlayerScore(string game, string playerName,
+        public Task<ICollection<LeaderboardEntry>> GetPlayerScore(string game, 
+            string playerName, 
+            bool caseInsensitive = false, 
             CancellationToken token = default)
         {
             const string path = "/score/get";
@@ -100,7 +102,8 @@ namespace AndreyGames.Leaderboards.API
             var json = SerializeJsonBytes(new GetPlayerScoreRequest
             {
                 Game = game,
-                PlayerName = playerName
+                PlayerName = playerName,
+                CaseInsensitive = caseInsensitive,
             });
 
             var request = new LeaderboardsCryptoRequest
@@ -109,12 +112,13 @@ namespace AndreyGames.Leaderboards.API
                     _password,
                     _seed),
             };
-
+            
             return GetPlayerScore(url, request, token);
         }
 
         public Task<LeaderboardEntry> GetPlayerRank(string game, 
             string playerName, 
+            bool caseInsensitive = false,
             bool winnersOnly = false, 
             TimeFrame? timeFrame = default,
             CancellationToken token = default)
@@ -126,10 +130,11 @@ namespace AndreyGames.Leaderboards.API
                 "Executing GetPlayerOffset command on URL '{0}', game=[{1}], winnersOnly=[{2}], timeFrame=[{3}]",
                 url, game, winnersOnly, timeFrame);
 
-            var json = SerializeJsonBytes(new GetPlayerRank
+            var json = SerializeJsonBytes(new GetPlayerRankRequest
             {
                 Game = game,
                 PlayerName = playerName,
+                CaseInsensitive = caseInsensitive,
                 WinnersOnly = winnersOnly,
                 Time = timeFrame,
             });

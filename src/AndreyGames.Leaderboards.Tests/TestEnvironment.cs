@@ -122,16 +122,17 @@ namespace AndreyGames.Leaderboards.Tests
                 _leaderboards.Add(game);
             }
 
-            public Task<ICollection<LeaderboardEntry>> GetPlayerScore(string game, string playerName,
+            public Task<ICollection<LeaderboardEntry>> GetPlayerScore(string game, string playerName, 
+                bool caseInsensitive, 
                 CancellationToken token = default)
             {
-                return _leaderboardsClientImplementation.GetPlayerScore(game, playerName, token);
+                return _leaderboardsClientImplementation.GetPlayerScore(game, playerName, caseInsensitive, token);
             }
 
-            public Task<LeaderboardEntry> GetPlayerRank(string game, string playerName, bool winnersOnly = false, TimeFrame? timeFrame = default,
+            public Task<LeaderboardEntry> GetPlayerRank(string game, string playerName, bool caseInsensitive, bool winnersOnly = false, TimeFrame? timeFrame = default,
                 CancellationToken token = default)
             {
-                return _leaderboardsClientImplementation.GetPlayerRank(game, playerName, winnersOnly, timeFrame,
+                return _leaderboardsClientImplementation.GetPlayerRank(game, playerName, caseInsensitive, winnersOnly, timeFrame,
                     token);
             }
 

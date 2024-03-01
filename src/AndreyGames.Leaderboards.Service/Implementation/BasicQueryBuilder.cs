@@ -15,8 +15,13 @@ namespace AndreyGames.Leaderboards.Service.Implementation
         private readonly List<(string Field, object Value1, object Value2)> _andBetweens = new();
 
         private string _template;
+        private string _envelope;
+
+        private int? _limit, _offset;
         
         public static string WherePlaceholder => "%%WHERE%%";
+
+        public static string PagingPlaceholder => "%%PAGING%%";
         
         private BasicQueryBuilder(DbContext dbContext)
         {
@@ -34,6 +39,19 @@ namespace AndreyGames.Leaderboards.Service.Implementation
         public BasicQueryBuilder<TModel> WithArbitraryParameter(string name, object value)
         {
             _arbitraryParams[name] = value;
+            return this;
+        }
+
+        public BasicQueryBuilder<TModel> WithEnvelope(string formattedEnvelope)
+        {
+            _envelope = formattedEnvelope;
+            return this;
+        }
+
+        public BasicQueryBuilder<TModel> WithPaging(int? limit = default, int? offset = default)
+        {
+            _limit = limit;
+            _offset = offset;
             return this;
         }
         
@@ -80,7 +98,23 @@ namespace AndreyGames.Leaderboards.Service.Implementation
             }
 
             var where = string.Join(" AND ", all);
-            return _template.Replace(WherePlaceholder, where);
+
+            if (!string.IsNullOrEmpty(_envelope) && !string.IsNullOrWhiteSpace(where))
+            {
+                where = string.Format(_envelope, where);
+            }
+            
+            var resultQuery = _template.Replace(WherePlaceholder, where);
+
+            if (_offset.HasValue || _limit.HasValue)
+            {
+                var paging = (_limit.HasValue ? $" LIMIT {_limit} " : "") +
+                             (_offset.HasValue ? $" OFFSET {_offset} " : "");
+
+                resultQuery = resultQuery.Replace(PagingPlaceholder, paging);
+            }
+
+            return resultQuery;
         }
 
         private DynamicParameters BuildParameters()
